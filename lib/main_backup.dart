@@ -51,8 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   flex: 3,
                   child: Container(
                     width: width,
+                   
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                       mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children:<Widget> [
                           Image.asset('images/group.png'),
@@ -69,8 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                         decoration: const BoxDecoration(color: Colors.green),
-                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                         decoration: BoxDecoration(color: Colors.green),
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                         width: width * 0.80,
                         height: height * 0.07,
                         child: ElevatedButton(
@@ -87,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               primary: const Color(0xffffa300),
                               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                               shape: RoundedRectangleBorder(
-                                borderRadius:  BorderRadius.circular(8.0),
+                                borderRadius: new BorderRadius.circular(8.0),
                              )
                            )
                           ),
@@ -111,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                         shape: RoundedRectangleBorder(
                           side: const BorderSide(color: Colors.white),
-                          borderRadius:  BorderRadius.circular(8.0),
+                          borderRadius: new BorderRadius.circular(8.0),
                        ),
                        
                      )
