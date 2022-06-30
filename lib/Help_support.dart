@@ -1,92 +1,48 @@
-import 'package:date_count_down/countdown.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_countdown_timer/countdown.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:date_count_down/date_count_down.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import "Contest.dart";
-import 'Home.dart';
-import 'Globe_contest.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
-import './Feed.dart';
-import './Settings.dart';
-import 'Help_support.dart';
-class Dashboard extends StatefulWidget {
+import 'package:localstorage/localstorage.dart';
+import 'Setting_edit.dart';
+import 'package:file_picker/file_picker.dart';
+class Help_support extends StatefulWidget {
   
-  const Dashboard({Key? key, }) : super(key: key);
+  const Help_support({Key? key, }) : super(key: key);
   
   @override
   
    
 
   
-  State<Dashboard> createState() => _Dashboard();
+  State<Help_support> createState() => _Help_support();
 }
 
-class _Dashboard extends State<Dashboard> {
-  int activeindex =0;
-  List<int> list = [1, 2, 3, 4, 5];
-  int counter = 2;
-  String counttime = "Loading";
-  // Timer? countdownTimer;
-  Duration myDuration = Duration(days: 5);
-  String _title =  "Home";
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Home(),
-    Globe_contest(),
-    Feed(),
-    Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-     Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-     Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-  ];
-   @override
-  initState(){
-    _title = 'Home';
-  }
-  void _onItemTapped(int index) {
+class _Help_support extends State<Help_support> {
+   int counter = 2;
+   String _title =  "Help and Support";
+    final storage = new LocalStorage('my_data');
+    String useremail = "";
+    String gender = "";
+     @override
+  void initState() {
     setState(() {
-      _selectedIndex = index;
-      switch(index) { 
-       case 0: { _title = 'Home'; } 
-       break; 
-       case 1: { _title = 'My Contests'; } 
-       break;
-       case 2: { _title = 'Feed'; } 
-       break;
-       case 3: { _title = 'Clients'; } 
-       break; 
-      } 
+        useremail  = storage.getItem('Usermail');
+        gender  = storage.getItem('usergender');
     });
   }
-
-
-  @override
-  Widget build(BuildContext context) {
-    counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"), "Completed", "d :", "h :", "m :", "s", "D ", "H ", "M", "S");
+  String dropdownvalue = 'Item 1';
+    var items = [   
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
+   Widget build(BuildContext context) {
+   
     double width = MediaQuery.of(context).size.width;
       double height = MediaQuery.of(context).size.height;
     String strDigits(int n) => n.toString().padLeft(2, '0');
-    final days = strDigits(myDuration.inDays); // <-- SEE HERE
-    final hours = strDigits(myDuration.inHours.remainder(24));
-    final minutes = strDigits(myDuration.inMinutes.remainder(60));
-    final seconds = strDigits(myDuration.inSeconds.remainder(60));
+    
     return Scaffold(
-       
-      appBar: PreferredSize(
+       appBar: PreferredSize(
             preferredSize:  Size.fromHeight(height * 0.10),
             child: AppBar(
               // leading: Column(
@@ -160,45 +116,160 @@ class _Dashboard extends State<Dashboard> {
               backgroundColor: const Color(0xff1042aa), 
             ),
       ),
+      body: SingleChildScrollView(
+        child: Container(
+            margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment:MainAxisAlignment.start,
+              children : [
+                  Container(
+                     margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    child: const Text("Email",style: 
+                      TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"
+                      ),
+                    ),
+                  ),
+                  Container(
+                     margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                    child:     const TextField (  
+                      decoration: InputDecoration(  
+                        hintText: 'Enter Your email'  
+                      ),  
+                    ),  
+                  ),
+                  Container(
+                     margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    child: const Text("Subject",style: 
+                      TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width:  width * 0.90,
+                     margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                   child: DropdownButton(
           
-        
-     
-      body: _widgetOptions.elementAt(_selectedIndex),
-      
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-           icon: Icon(FontAwesomeIcons.home), 
-            label: 'Home',
-            backgroundColor: Color.fromARGB(255, 255, 255, 255),
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.star), 
-            label: 'My Match',
-            backgroundColor: Colors.green,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.rss),
-            label: 'Feed',
-            backgroundColor: Colors.purple,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.boxesStacked), 
-            label: 'Others',
-            backgroundColor: Colors.pink,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.user), 
-            label: 'Profile',
-            backgroundColor: Colors.pink,
-          ),
-        ],
-       
-        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        showUnselectedLabels: true,
-        iconSize: 35,
-         onTap: _onItemTapped,
+          
+                        isExpanded: true,
+                        // Initial Value
+                        value: dropdownvalue,
+                        
+                        // Down Arrow Icon
+                        icon: const Icon(Icons.keyboard_arrow_down),   
+                        
+                        // Array list of items
+                        items: items.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(items),
+                          );
+                        }).toList(),
+                        // After selecting the desired option,it will
+                        // change button value to selected value
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownvalue = newValue!;
+                          });
+                        },
+                        hint: Container(
+                        width: 150,                      //and here
+                        child: Text(
+                          "Select Item Type",
+                          style: TextStyle(color: Colors.grey),
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                     
+                    ),
+                      
+                  ),
+                  Container(
+                     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Text("Description",style: 
+                      const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"
+                      ),
+                    ),
+                  ),
+                  Container(
+                     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: const TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      minLines: 5
+                    )
+                  ),
+                  Container(
+                     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    width: width * 0.90,
+                    child : ElevatedButton(
+                      onPressed: () async{
+                         final result = await FilePicker.platform.pickFiles();
+                
+                          if(result == null) return;
+                          final file = result.files.first;
+                          if(file != null){
+                              // Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(builder: (context) => const Contested() )
+                              // );
+                          }
+                          print('${file.name}');
+                      },
+                      child: const Padding(
+                         padding: const EdgeInsets.only(left: 8),
+                        child: Text("Upload attachment",style: TextStyle(
+                           fontSize: 18,
+                          fontFamily: "SFPRO regular",
+                           color: Colors.black,
+                        ),),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 255, 255, 255),
+                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:  BorderRadius.circular(5.0),
+                        )
+                      )
+                    ),
+                  ),
+                   Container(
+                    width: width * 0.90,
+                     height: height * 0.07,
+                     child: ElevatedButton(
+                        
+                         onPressed: (){
+                          //  Navigator.push(
+                          //               context,
+                          //               MaterialPageRoute(builder: (context) =>  const Settings_edit()),
+                          // );
+                        }, 
+                        child: const Text("Submit",style: TextStyle(
+                          fontSize: 20,
+                        ),),
+                         style: ElevatedButton.styleFrom(
+                            primary:  Color(0xffffa300),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(color: Colors.white),
+                              borderRadius:  BorderRadius.circular(8.0),
+                           ),
+                           
+                         )
+                        ),
+                   ),
+              ]
+            ),
+        ),
       ),
       drawer: Drawer(  
         child: Container(
@@ -306,10 +377,10 @@ class _Dashboard extends State<Dashboard> {
               ),
               InkWell(
                 onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Settings()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) =>  const Settings()),
+                    // );
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -336,30 +407,22 @@ class _Dashboard extends State<Dashboard> {
                   color: Colors.grey
                 ),
               ),
-              InkWell(
-                onTap: () {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Help_support()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.help_center,color: Colors.white,),
-                      Text(' Help Desk',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
+              Container(
+                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                child : 
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: const[
+                    
+                    Icon(Icons.help_center,color: Colors.white,),
+                    Text(' Help Desk',style: TextStyle(
+                      color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular",
                       ),
-                    ],
-                  )
-                ),
+                    ),
+                  ],
+                )
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -443,10 +506,7 @@ class _Dashboard extends State<Dashboard> {
             ]
           ),
         ),
-      ),   
-        
+      ), 
     );
-    
-  }
- 
+   }
 }

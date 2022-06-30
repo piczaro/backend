@@ -1,92 +1,39 @@
-import 'package:date_count_down/countdown.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_countdown_timer/countdown.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:date_count_down/date_count_down.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import "Contest.dart";
-import 'Home.dart';
-import 'Globe_contest.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
-import './Feed.dart';
-import './Settings.dart';
-import 'Help_support.dart';
-class Dashboard extends StatefulWidget {
+import 'package:localstorage/localstorage.dart';
+import 'Setting_edit.dart';
+class Settings extends StatefulWidget {
   
-  const Dashboard({Key? key, }) : super(key: key);
+  const Settings({Key? key, }) : super(key: key);
   
   @override
   
    
 
   
-  State<Dashboard> createState() => _Dashboard();
+  State<Settings> createState() => _Settings();
 }
 
-class _Dashboard extends State<Dashboard> {
-  int activeindex =0;
-  List<int> list = [1, 2, 3, 4, 5];
-  int counter = 2;
-  String counttime = "Loading";
-  // Timer? countdownTimer;
-  Duration myDuration = Duration(days: 5);
-  String _title =  "Home";
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Home(),
-    Globe_contest(),
-    Feed(),
-    Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-     Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-     Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
-  ];
-   @override
-  initState(){
-    _title = 'Home';
-  }
-  void _onItemTapped(int index) {
+class _Settings extends State<Settings> {
+   int counter = 2;
+   String _title =  "Settings";
+    final storage = new LocalStorage('my_data');
+    String useremail = "";
+    String gender = "";
+     @override
+  void initState() {
     setState(() {
-      _selectedIndex = index;
-      switch(index) { 
-       case 0: { _title = 'Home'; } 
-       break; 
-       case 1: { _title = 'My Contests'; } 
-       break;
-       case 2: { _title = 'Feed'; } 
-       break;
-       case 3: { _title = 'Clients'; } 
-       break; 
-      } 
+        useremail  = storage.getItem('Usermail');
+        gender  = storage.getItem('usergender');
     });
   }
-
-
-  @override
-  Widget build(BuildContext context) {
-    counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"), "Completed", "d :", "h :", "m :", "s", "D ", "H ", "M", "S");
+   Widget build(BuildContext context) {
+   
     double width = MediaQuery.of(context).size.width;
       double height = MediaQuery.of(context).size.height;
     String strDigits(int n) => n.toString().padLeft(2, '0');
-    final days = strDigits(myDuration.inDays); // <-- SEE HERE
-    final hours = strDigits(myDuration.inHours.remainder(24));
-    final minutes = strDigits(myDuration.inMinutes.remainder(60));
-    final seconds = strDigits(myDuration.inSeconds.remainder(60));
+    
     return Scaffold(
-       
-      appBar: PreferredSize(
+       appBar: PreferredSize(
             preferredSize:  Size.fromHeight(height * 0.10),
             child: AppBar(
               // leading: Column(
@@ -160,45 +107,154 @@ class _Dashboard extends State<Dashboard> {
               backgroundColor: const Color(0xff1042aa), 
             ),
       ),
-          
-        
-     
-      body: _widgetOptions.elementAt(_selectedIndex),
-      
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-           icon: Icon(FontAwesomeIcons.home), 
-            label: 'Home',
-            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+      body: Container(
+          margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment:MainAxisAlignment.start,
+            children : [
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("Email",style: 
+                    TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: Text(useremail,style :
+                     const TextStyle(
+                      color: Color.fromARGB(255, 107, 106, 106),
+                      fontSize: 16,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("Date of Birth",style: 
+                    TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("10-02-2022",style :
+                     TextStyle(
+                      color: Color.fromARGB(255, 107, 106, 106),
+                      fontSize: 16,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: Text(gender,style: 
+                    const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("Male",style :
+                     TextStyle(
+                      color: Color.fromARGB(255, 107, 106, 106),
+                      fontSize: 16,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("Pancard",style: 
+                    TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("ASFH10234",style :
+                     TextStyle(
+                      color: Color.fromARGB(255, 107, 106, 106),
+                      fontSize: 16,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Container(
+                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text("Password",style: 
+                    TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontFamily: "SFPRO regular"
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                       margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: GestureDetector(
+                        onTap: (){
+                          print("change password");
+                        },
+                        child: const Text("change password",style :
+                           TextStyle(
+                            color: Color.fromARGB(255, 10, 109, 201),
+                            fontSize: 16,
+                            fontFamily: "SFPRO regular",
+                            decoration: TextDecoration.underline,
+                            
+                          ),
+                          
+
+                        ),
+                      ),
+                    ),
+                   
+                  ],
+                ),
+                 Container(
+                  width: width * 0.90,
+                   height: height * 0.07,
+                   child: ElevatedButton(
+                      
+                       onPressed: (){
+                         Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) =>  const Settings_edit()),
+                        );
+                      }, 
+                      child: const Text("Edit",style: TextStyle(
+                        fontSize: 20,
+                      ),),
+                       style: ElevatedButton.styleFrom(
+                          primary:  Color(0xffffa300),
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(color: Colors.white),
+                            borderRadius:  BorderRadius.circular(8.0),
+                         ),
+                         
+                       )
+                      ),
+                 ),
+            ]
           ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.star), 
-            label: 'My Match',
-            backgroundColor: Colors.green,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.rss),
-            label: 'Feed',
-            backgroundColor: Colors.purple,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.boxesStacked), 
-            label: 'Others',
-            backgroundColor: Colors.pink,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.user), 
-            label: 'Profile',
-            backgroundColor: Colors.pink,
-          ),
-        ],
-       
-        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        showUnselectedLabels: true,
-        iconSize: 35,
-         onTap: _onItemTapped,
       ),
       drawer: Drawer(  
         child: Container(
@@ -336,30 +392,22 @@ class _Dashboard extends State<Dashboard> {
                   color: Colors.grey
                 ),
               ),
-              InkWell(
-                onTap: () {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Help_support()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.help_center,color: Colors.white,),
-                      Text(' Help Desk',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
+              Container(
+                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                child : 
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: const[
+                    
+                    Icon(Icons.help_center,color: Colors.white,),
+                    Text(' Help Desk',style: TextStyle(
+                      color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular",
                       ),
-                    ],
-                  )
-                ),
+                    ),
+                  ],
+                )
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -443,10 +491,7 @@ class _Dashboard extends State<Dashboard> {
             ]
           ),
         ),
-      ),   
-        
+      ), 
     );
-    
-  }
- 
+   }
 }
