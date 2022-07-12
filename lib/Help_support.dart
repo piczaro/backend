@@ -18,13 +18,13 @@ class _Help_support extends State<Help_support> {
    int counter = 2;
    String _title =  "Help and Support";
     final storage = new LocalStorage('my_data');
-    String useremail = "";
-    String gender = "";
+    String useremail = "test@gmail.com";
+    String gender = "Male";
      @override
   void initState() {
     setState(() {
-        useremail  = storage.getItem('Usermail');
-        gender  = storage.getItem('usergender');
+        // useremail  = storage.getItem('Usermail');
+        // gender  = storage.getItem('usergender');
     });
   }
   String dropdownvalue = 'Item 1';

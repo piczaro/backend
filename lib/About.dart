@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'Setting_edit.dart';
-class Settings extends StatefulWidget {
+import 'package:file_picker/file_picker.dart';
+class About extends StatefulWidget {
   
-  const Settings({Key? key, }) : super(key: key);
+  const About({Key? key, }) : super(key: key);
   
   @override
   
    
 
   
-  State<Settings> createState() => _Settings();
+  State<About> createState() => _About();
 }
 
-class _Settings extends State<Settings> {
+class _About extends State<About> {
    int counter = 2;
-   String _title =  "Settings";
+   String _title =  "About";
     final storage = new LocalStorage('my_data');
-    String useremail = "testmail@gmail.com";
+    String useremail = "test@gmail.com";
     String gender = "Male";
      @override
   void initState() {
@@ -26,6 +27,14 @@ class _Settings extends State<Settings> {
         // gender  = storage.getItem('usergender');
     });
   }
+  String dropdownvalue = 'Item 1';
+    var items = [   
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
    Widget build(BuildContext context) {
    
     double width = MediaQuery.of(context).size.width;
@@ -107,154 +116,39 @@ class _Settings extends State<Settings> {
               backgroundColor: const Color(0xff1042aa), 
             ),
       ),
-      body: Container(
-          margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment:MainAxisAlignment.start,
-            children : [
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Email",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(useremail,style :
-                     const TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Date of Birth",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("10-02-2022",style :
-                     TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(gender,style: 
-                    const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Male",style :
-                     TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Pancard",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("ASFH10234",style :
-                     TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Password",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                       margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      child: GestureDetector(
-                        onTap: (){
-                          print("change password");
-                        },
-                        child: const Text("change password",style :
-                           TextStyle(
-                            color: Color.fromARGB(255, 10, 109, 201),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment:MainAxisAlignment.center,
+          children : [
+              Container(
+                child:Text("@ 2021 PicZaro LLp",style: TextStyle(
                             fontSize: 16,
-                            fontFamily: "SFPRO regular",
-                            decoration: TextDecoration.underline,
-                            
+                            color: Color.fromARGB(255, 82, 81, 81),
+                          ),)
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(15, 10, 10, 10),
+                child: Text(
+                  "www.piczaro.com"
+                  ,style: TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 82, 81, 81),
                           ),
-                          
-
-                        ),
-                      ),
-                    ),
-                   
-                  ],
                 ),
-                 Container(
-                  width: width * 0.90,
-                   height: height * 0.07,
-                   child: ElevatedButton(
-                      
-                       onPressed: (){
-                         Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) =>  const Settings_edit()),
-                        );
-                      }, 
-                      child: const Text("Edit",style: TextStyle(
-                        fontSize: 20,
-                      ),),
-                       style: ElevatedButton.styleFrom(
-                          primary:  Color(0xffffa300),
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(color: Colors.white),
-                            borderRadius:  BorderRadius.circular(8.0),
-                         ),
-                         
-                       )
-                      ),
-                 ),
-            ]
-          ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(15, 10, 10, 10),
+                child: Text(
+                  "support@piczaro.com"
+                  ,style: TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 82, 81, 81),
+                          ),
+                ),
+              )
+          ]
+        ),
       ),
       drawer: Drawer(  
         child: Container(
@@ -362,10 +256,10 @@ class _Settings extends State<Settings> {
               ),
               InkWell(
                 onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Settings()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) =>  const Settings()),
+                    // );
                 },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),

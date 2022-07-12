@@ -13,6 +13,10 @@ import 'package:cupertino_icons/cupertino_icons.dart';
 import './Feed.dart';
 import './Settings.dart';
 import 'Help_support.dart';
+import 'Terms_condition.dart';
+import 'About.dart';
+import 'Find_my_friends.dart';
+import 'Notifications.dart';
 class Dashboard extends StatefulWidget {
   
   const Dashboard({Key? key, }) : super(key: key);
@@ -117,40 +121,48 @@ class _Dashboard extends State<Dashboard> {
            Column(
              mainAxisAlignment: MainAxisAlignment.end,
              children: [
-               Container(
-                 margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                 child: Stack(
-                  children: <Widget>[
-                     IconButton(icon: Icon(Icons.notifications,size: 30,), onPressed: () {
-                      setState(() {
-                        counter = 0;
-                      });
-                    }),
-                     Positioned(
-                      right: 11,
-                      top: 11,
-                      child:  Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration:  BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
+               InkWell(
+                onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const Notifications()),
+                    );
+                },
+                 child: Container(
+                   margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                   child: Stack(
+                    children: <Widget>[
+                       IconButton(icon: Icon(Icons.notifications,size: 30,), onPressed: () {
+                        setState(() {
+                          counter = 0;
+                        });
+                      }),
+                       Positioned(
+                        right: 11,
+                        top: 11,
+                        child:  Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration:  BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
                           ),
-                          textAlign: TextAlign.center,
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-          ),
+                      )
+                    ],
+                         ),
+                 ),
                ),
              ],
            ),
@@ -280,22 +292,30 @@ class _Dashboard extends State<Dashboard> {
                   color: Colors.grey
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.gps_fixed,color: Colors.white,),
-                    Text(' Find my Friends',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
+              InkWell(
+                onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const Find_my_friends()),
+                    );
+                },
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child : 
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: const[
+                      
+                      Icon(Icons.gps_fixed,color: Colors.white,),
+                      Text(' Find my Friends',style: TextStyle(
+                        color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular",
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
+                ),
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -368,22 +388,30 @@ class _Dashboard extends State<Dashboard> {
                   color: Colors.grey
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.account_box_outlined,color: Colors.white,),
-                    Text(' About App',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
+              InkWell(
+                onTap: () {
+                     Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const About()),
+                    );
+                },
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child : 
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: const[
+                      
+                      Icon(Icons.account_box_outlined,color: Colors.white,),
+                      Text(' About App',style: TextStyle(
+                        color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular",
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
+                ),
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -392,22 +420,30 @@ class _Dashboard extends State<Dashboard> {
                   color: Colors.grey
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.money_outlined,color: Colors.white,),
-                    Text(' Terms & condition',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
+              InkWell(
+                 onTap: () {
+                     Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const Terms_condition()),
+                    );
+                },
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child : 
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: const[
+                      
+                      Icon(Icons.money_outlined,color: Colors.white,),
+                      Text(' Terms & condition',style: TextStyle(
+                        color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular",
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
+                ),
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
