@@ -17,6 +17,8 @@ import 'Terms_condition.dart';
 import 'About.dart';
 import 'Find_my_friends.dart';
 import 'Notifications.dart';
+import 'Mybalance.dart';
+import 'Refer_earn.dart';
 class Dashboard extends StatefulWidget {
   
   const Dashboard({Key? key, }) : super(key: key);
@@ -220,22 +222,30 @@ class _Dashboard extends State<Dashboard> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.money,color: Colors.white,),
-                    Text(' My Balance',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
+              InkWell(
+                onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const Mybalance()),
+                    );
+                },
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child : 
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: const[
+                      
+                      Icon(Icons.money,color: Colors.white,),
+                      Text(' My Balance',style: TextStyle(
+                        color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular",
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
+                ),
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
@@ -244,22 +254,30 @@ class _Dashboard extends State<Dashboard> {
                   color: Colors.grey
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.share_rounded,color: Colors.white,),
-                    Text(' Refer & Earn',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
+              InkWell(
+                onTap: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const Refer_earn()),
+                    );
+                },
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child : 
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: const[
+                      
+                      Icon(Icons.share_rounded,color: Colors.white,),
+                      Text(' Refer & Earn',style: TextStyle(
+                        color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular",
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
+                ),
               ),
               Container(
                 margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
