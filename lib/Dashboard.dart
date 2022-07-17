@@ -19,6 +19,7 @@ import 'Find_my_friends.dart';
 import 'Notifications.dart';
 import 'Mybalance.dart';
 import 'Refer_earn.dart';
+import 'Profile.dart';
 class Dashboard extends StatefulWidget {
   
   const Dashboard({Key? key, }) : super(key: key);
@@ -50,10 +51,7 @@ class _Dashboard extends State<Dashboard> {
       'Index 3: Settings',
       style: optionStyle,
     ),
-     Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
+     Profile(),
      Text(
       'Index 3: Settings',
       style: optionStyle,
@@ -74,6 +72,8 @@ class _Dashboard extends State<Dashboard> {
        case 2: { _title = 'Feed'; } 
        break;
        case 3: { _title = 'Clients'; } 
+       break;
+       case 4: { _title = 'My Profile'; } 
        break; 
       } 
     });
