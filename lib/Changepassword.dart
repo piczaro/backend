@@ -3,18 +3,17 @@ import 'mydrawer.dart';
 import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
 
-class Settings_edit extends StatefulWidget {
-  const Settings_edit({
+class Changepassword extends StatefulWidget {
+  const Changepassword({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<Settings_edit> createState() => _Settings_edit();
+  State<Changepassword> createState() => _Changepassword();
 }
 
-class _Settings_edit extends State<Settings_edit> {
+class _Changepassword extends State<Changepassword> {
   String _title = "Settings";
   int counter = 2;
   // String useremail = "testmail@gmail.com";
@@ -39,16 +38,15 @@ class _Settings_edit extends State<Settings_edit> {
       print(jsonData);
       if (jsonData != null) {
         setState(() {
-          userEmail.text = jsonData['email'];
-          dropdownvalue = jsonData['gender'];
-          userName.text = jsonData['name'];
+          // userEmail.text = jsonData['email'];
+          // dropdownvalue = jsonData['gender'];
+          // userName.text = jsonData['name'];
         });
       }
     } else {}
     return jsonDecode(response.body)['data'];
   }
 
-  bool isLoading = false;
   late Future<Map<String, dynamic>> futureAlbum;
   @override
   void initState() {
@@ -62,69 +60,6 @@ class _Settings_edit extends State<Settings_edit> {
     'Female',
     'Mixed',
   ];
-  Future<http.Response?> createAlbum() async {
-    final storage = LocalStorage('my_data');
-    final token = await storage.getItem('jwt_token');
-    final user_id = await storage.getItem('user_id');
-    Map<String, dynamic> jsonMap_body = {
-      "name": userName.text,
-      "email": userEmail.text,
-      "gender": dropdownvalue.toString(),
-    };
-    print(jsonMap_body);
-    setState(() {
-      isLoading = true;
-    });
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/user_update/${user_id}'),
-      headers: {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${token}',
-      },
-      body: json.encode(jsonMap_body),
-    );
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body)['data'];
-      print(jsonData);
-
-      if (jsonDecode(response.body)['status']) {
-        Fluttertoast.showToast(
-            msg: jsonDecode(response.body)['message'],
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromARGB(255, 59, 146, 1),
-            textColor: Color.fromARGB(255, 255, 255, 255));
-      }
-      setState(() {
-        isLoading = false;
-      });
-      return jsonData;
-    }else if(response.statusCode == 400){
-      print(jsonDecode(response.body));
-      if(jsonDecode(response.body)['error'] != null){
-           Fluttertoast.showToast(
-            msg: jsonDecode(response.body)['error'].toString(),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromARGB(255, 228, 27, 0),
-            textColor: Color.fromARGB(255, 255, 255, 255));
-      } 
-       setState(() {
-        isLoading = false;
-      });
-      // var message = jsonDecode(response.body)['message'];
-         
-    }else {
-      print(jsonDecode(response.body));
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
   TextEditingController userName = TextEditingController();
   TextEditingController userEmail = TextEditingController();
   Widget build(BuildContext context) {
@@ -211,7 +146,7 @@ class _Settings_edit extends State<Settings_edit> {
                   Container(
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                     child: const Text(
-                      "Name",
+                      "Current Password",
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -221,6 +156,7 @@ class _Settings_edit extends State<Settings_edit> {
                   Container(
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                     child: TextFormField(
+                      obscureText: true,
                       controller: userName,
                       style: const TextStyle(
                           color: Color.fromARGB(255, 0, 0, 0),
@@ -231,19 +167,16 @@ class _Settings_edit extends State<Settings_edit> {
                           borderSide:
                               BorderSide(color: Color(0xff979197), width: 1.5),
                         ),
-                        hintText: 'Name',
+                        hintText: 'Current Password',
                         hintStyle: TextStyle(
                             fontSize: 16.0,
                             fontFamily: 'SFPRO reqular',
-                            color: Color.fromARGB(255, 0, 0, 0)),
+                            color: Color.fromARGB(255, 104, 104, 104)),
                         prefixIcon: Padding(
                           padding: EdgeInsets.only(
                               top: 0), // add padding to adjust icon
                           child: Icon(
-                            IconData(
-                              0xe3c3,
-                              fontFamily: 'MaterialIcons',
-                            ),
+                            Icons.vpn_key,
                             color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
@@ -262,7 +195,7 @@ class _Settings_edit extends State<Settings_edit> {
                   Container(
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                     child: const Text(
-                      "Email",
+                      "New Password",
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -272,6 +205,7 @@ class _Settings_edit extends State<Settings_edit> {
                   Container(
                     margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                     child: TextFormField(
+                      obscureText: true,
                       controller: userEmail,
                       style: const TextStyle(
                           color: Color.fromARGB(255, 0, 0, 0),
@@ -282,19 +216,65 @@ class _Settings_edit extends State<Settings_edit> {
                           borderSide:
                               BorderSide(color: Color(0xff979197), width: 1.5),
                         ),
-                        hintText: 'Password',
+                        hintText: 'New Password',
                         hintStyle: TextStyle(
                             fontSize: 16.0,
                             fontFamily: 'SFPRO reqular',
-                            color: Colors.white),
+                            color: Color.fromARGB(255, 104, 104, 104)),
                         prefixIcon: Padding(
                           padding: EdgeInsets.only(
                               top: 0), // add padding to adjust icon
                           child: Icon(
-                            IconData(
-                              0xe3c3,
-                              fontFamily: 'MaterialIcons',
-                            ),
+                            Icons.vpn_key,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ),
+                      ),
+                      validator: (val) {
+                        if (val != '') {
+                          setState(() {
+                            // password = val!;
+                          });
+                        }
+
+                        return val!.isEmpty ? 'please enter a password' : null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    child: const Text(
+                      "Confirm New Password",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular"),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    child: TextFormField(
+                      obscureText: true,
+                      controller: userEmail,
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 18,
+                          fontFamily: 'SFPRO regular'),
+                      decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Color(0xff979197), width: 1.5),
+                        ),
+                        hintText: 'Confirm New Password',
+                        hintStyle: TextStyle(
+                            fontSize: 16.0,
+                            fontFamily: 'SFPRO reqular',
+                            color: Color.fromARGB(255, 104, 104, 104)),
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(
+                              top: 0), // add padding to adjust icon
+                          child: Icon(
+                            Icons.vpn_key,
                             color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
@@ -330,52 +310,7 @@ class _Settings_edit extends State<Settings_edit> {
                   //         fontFamily: "SFPRO regular"),
                   //   ),
                   // ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: Text(
-                      "Gender",
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular"),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    width: width,
-                    child: DropdownButton(
-                      // Initial Value
-                      value: dropdownvalue,
-                      alignment: Alignment.center,
-                      // Down Arrow Icon
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      onChanged: (val) {
-                        setState(() {
-                          dropdownvalue = val.toString();
-                        });
-                      },
-                      // Array list of items
-                      items: items.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: SizedBox(
-                            width: width * 0.73,
-                            child: Text(
-                              items,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      // onChanged: (String? newValue) {
-                      //   setState(() {
-                      //     dropdownvalue = newValue!;
-                      //   });
-                      // },
-                    ),
-                  ),
+
                   // Container(
                   //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                   //   child: const Text(
@@ -407,39 +342,17 @@ class _Settings_edit extends State<Settings_edit> {
                   //   ),
                   // ),
                   Container(
+                    margin: EdgeInsets.fromLTRB(0, 25, 0, 0),
                     width: width * 0.90,
                     height: height * 0.07,
                     child: ElevatedButton(
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          createAlbum();
-                        },
-                        child: isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-
-                                // as elevated button gets clicked we will see text"Loading..."
-                                // on the screen with circular progress indicator white in color.
-                                //as loading gets stopped "Submit" will be displayed
-                                children: const [
-                                  Text(
-                                    'Loading...',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              )
-                            : const Text(
-                                "Save",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
+                        onPressed: () {},
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           primary: Color(0xffffa300),
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),

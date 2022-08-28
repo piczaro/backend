@@ -16,47 +16,16 @@ import 'Points.dart';
 import 'Posts.dart';
 import 'Followers.dart';
 import 'Followings.dart';
-import 'dart:convert';
-import 'package:localstorage/localstorage.dart';
-import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
+import 'Notifications.dart';
 
-class Profile extends StatefulWidget {
-  final int index;
-  const Profile({Key? key, required this.index}) : super(key: key);
+class MYProfile extends StatefulWidget {
+  const MYProfile({Key? key}) : super(key: key);
 
   @override
-  State<Profile> createState() => _Profile();
+  State<MYProfile> createState() => _MYProfile();
 }
 
-class _Profile extends State<Profile> with TickerProviderStateMixin {
-  Future<Map<String, dynamic>> loaddata() async {
-    final storage = LocalStorage('my_data');
-    final token = await storage.getItem('jwt_token');
-    final user_id = await storage.getItem('user_id');
-    final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/user_details/${user_id}'),
-      headers: {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${token}',
-        //'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNjYxMDY0MjkzLCJleHAiOjE2NjEwNjc4OTMsIm5iZiI6MTY2MTA2NDI5MywianRpIjoiNHZ3NXpoSWY4WEFuajJQZyIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.2uRgNx36JrNZzlezxQ7qfkqNsL8ydwxyZPCFUTgDsW',
-      },
-    );
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body)['data'];
-      print(jsonData);
-    } else {}
-    return jsonDecode(response.body)['data'];
-  }
-
-  late Future<Map<String, dynamic>> futureAlbum;
-  @override
-  void initState() {
-    super.initState();
-    futureAlbum = loaddata();
-  }
-
+class _MYProfile extends State<MYProfile> with TickerProviderStateMixin {
   List<int> list = [1, 2, 3, 4, 5];
   final List<Map<String, dynamic>> _statistics = [
     {'key': 'Flutter Tutorial', 'value': 90},
@@ -64,8 +33,9 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
     {'key': 'Java Tutorial', 'value': 30},
     {'key': 'sdfjsfjk', 'value': 70}
   ];
+  String _title = "Profile";
   int counter = 0;
-  int activeindex = 0;
+  int activeindex = 1;
 
   String counttime = "Loading";
   // Timer? countdownTimer;
@@ -73,8 +43,13 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
   bool clikc = true;
   @override
   Widget build(BuildContext context) {
-    TabController _controller =
-        TabController(length: 4, vsync: this, initialIndex: widget.index);
+    TabController _controller = TabController(length: 4, vsync: this,initialIndex: 1);
+    @override
+    void initState() {
+      super.initState();
+      _controller.index = 0;
+    }
+
     counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"),
         "Completed", "d :", "h :", "m :", "s", "D ", "H ", "M", "S");
     double width = MediaQuery.of(context).size.width;
@@ -85,107 +60,173 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 235, 235, 235),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(height * 0.10),
+        child: AppBar(
+          // leading: Column(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   children: [
+          //     IconButton(
+          //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+          //       onPressed: () => Navigator.of(context).pop(),
+          //     ),
+          //   ],
+          // ),
+          title: Center(
+            child: Text(
+              _title,
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            // child: Column(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Text(
+            //       _title,
+            //       style: TextStyle(
+            //         fontSize: 20,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+          ),
+          actions: <Widget>[
+            // Using Stack to show Notification Badge
+            Center(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Notifications()),
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  child: Stack(
+                    children: <Widget>[
+                      IconButton(
+                          icon: Icon(
+                            Icons.notifications,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              counter = 0;
+                            });
+                          }),
+                      Positioned(
+                        right: 11,
+                        top: 11,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+          centerTitle: true,
+          toolbarHeight: 100,
+          backgroundColor: const Color(0xff1042aa),
+        ),
+      ),
+      //backgroundColor: Color.fromARGB(255, 235, 235, 235),
       body: IntrinsicHeight(
         child: Container(
-          height: height * 0.80,
+          height: height * 0.99,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              FutureBuilder(
-                  future: futureAlbum,
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    } else {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Color(0xff1042aa),
-                        ),
-                        width: width,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                width: width * 0.30,
-                                height: height * 0.15,
-                                child: CircleAvatar(
-                                  radius: 30.0,
-                                  child: CachedNetworkImage(
-                                    imageUrl: snapshot.data['photoUrl'] != null ? snapshot.data['photoUrl'] :  'https://picsum.photos/200',
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      width: 110.0,
-                                      height: 110.0,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.fill),
-                                      ),
-                                    ),
-                                    placeholder: (context, url) =>
-                                        new CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        new Icon(Icons.error),
-                                    maxHeightDiskCache: 200,
-                                    maxWidthDiskCache: 500,
-                                  ),
-                                )),
-                            Container(
-                                child: Text(
-                              snapshot.data['username'],
-                              style: TextStyle(
-                                  fontSize: 23,
-                                  fontFamily: "SFPRO regular",
-                                  color: Colors.white),
-                            )),
-                            Container(
-                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                child: const Text(
-                                  "Photographer & Youtuber",
-                                  style: TextStyle(
-                                      fontSize: 23,
-                                      fontFamily: "SFPRO regular",
-                                      color: Colors.white),
-                                )),
-                            Container(
+              Container(
+                decoration: BoxDecoration(
+                  color: Color(0xff1042aa),
+                ),
+                width: width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      width: width * 0.30,
+                      height: height * 0.15,
+                      child: const CircleAvatar(
+                        radius: 30.0,
+                        backgroundImage:
+                            NetworkImage('https://via.placeholder.com/250'),
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                    Container(
+                        child: const Text(
+                      "User name",
+                      style: TextStyle(
+                          fontSize: 23,
+                          fontFamily: "SFPRO regular",
+                          color: Colors.white),
+                    )),
+                    Container(
+                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: const Text(
+                          "Photographer & Youtuber",
+                          style: TextStyle(
+                              fontSize: 23,
+                              fontFamily: "SFPRO regular",
+                              color: Colors.white),
+                        )),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.chessQueen,
+                            color: Color.fromARGB(255, 238, 220, 63),
+                            size: 40,
+                          ),
+                          Container(
                               margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  FaIcon(
-                                    FontAwesomeIcons.chessQueen,
-                                    color: Color.fromARGB(255, 238, 220, 63),
-                                    size: 40,
-                                  ),
-                                  Container(
-                                      margin:
-                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                      child: Text(
-                                        "Level - ${snapshot.data['level']}",
-                                        style: TextStyle(
-                                            fontSize: 23,
-                                            fontFamily: "SFPRO regular",
-                                            color: Colors.white),
-                                      )),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    }
-                  }),
+                              child: Text(
+                                "Level - 10",
+                                style: TextStyle(
+                                    fontSize: 23,
+                                    fontFamily: "SFPRO regular",
+                                    color: Colors.white),
+                              )),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       //This is for background color
                       color: Color(0xff1042aa),
                       //This is for bottom border that is needed
@@ -196,7 +237,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                     child: TabBar(
                       indicatorColor: Colors.transparent,
                       unselectedLabelColor: Colors.grey,
-                      indicator: UnderlineTabIndicator(
+                      indicator: const UnderlineTabIndicator(
                           borderSide: BorderSide(
                               color: Color.fromARGB(255, 30, 165, 255),
                               width: 2.0),
@@ -277,7 +318,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                     Container(
                       margin: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
                       width: width * 0.90,
-                      height: height * 0.32,
+                      height: height * 0.40,
                       child: TabBarView(
                           controller: _controller,
                           children: const <Widget>[

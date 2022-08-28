@@ -53,6 +53,10 @@ dependencies:
   shared_preferences: ^2.0.15
   flutter_dotenv: ^5.0.2
   localstorage: ^4.0.0+1
+  transparent_image: ^2.0.0
+  loading_gifs: ^0.3.0
+  cached_network_image: ^3.2.1
+  flutter_html: ^2.2.1
  
  
 

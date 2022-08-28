@@ -1,497 +1,311 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'Setting_edit.dart';
+import 'mydrawer.dart';
+import 'dart:convert';
+import 'package:localstorage/localstorage.dart';
+import 'package:http/http.dart' as http;
+import 'Changepassword.dart';
 class Settings extends StatefulWidget {
-  
-  const Settings({Key? key, }) : super(key: key);
-  
-  @override
-  
-   
+  const Settings({
+    Key? key,
+  }) : super(key: key);
 
-  
+  @override
   State<Settings> createState() => _Settings();
 }
 
 class _Settings extends State<Settings> {
-   int counter = 2;
-   String _title =  "Settings";
-    final storage = new LocalStorage('my_data');
-    String useremail = "testmail@gmail.com";
-    String gender = "Male";
-     @override
-  void initState() {
-    setState(() {
-        // useremail  = storage.getItem('Usermail');
-        // gender  = storage.getItem('usergender');
-    });
+  int counter = 2;
+  String _title = "Settings";
+  final storage = new LocalStorage('my_data');
+  String useremail = "";
+  String gender = "Gender";
+  String dropdownvalue = '';
+  String name = "";
+  String  user_type= "";
+  Future<Map<String, dynamic>> loaddata() async {
+    final storage = LocalStorage('my_data');
+    final token = await storage.getItem('jwt_token');
+    final user_id = await storage.getItem('user_id');
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/user_details/${user_id}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token}',
+        //'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNjYxMDY0MjkzLCJleHAiOjE2NjEwNjc4OTMsIm5iZiI6MTY2MTA2NDI5MywianRpIjoiNHZ3NXpoSWY4WEFuajJQZyIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.2uRgNx36JrNZzlezxQ7qfkqNsL8ydwxyZPCFUTgDsW',
+      },
+    );
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body)['data'];
+      print(jsonData);
+      if (jsonData != null) {
+        setState(() {
+          useremail = jsonData['email'];
+          dropdownvalue = jsonData['gender'];
+          name = jsonData['name'];
+          user_type = jsonData['user_type'];
+        });
+      }
+    } else {}
+    return jsonDecode(response.body)['data'];
   }
-   Widget build(BuildContext context) {
-   
+
+  late Future<Map<String, dynamic>> futureAlbum;
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = loaddata();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-      double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
     String strDigits(int n) => n.toString().padLeft(2, '0');
-    
+
     return Scaffold(
-       appBar: PreferredSize(
-            preferredSize:  Size.fromHeight(height * 0.10),
-            child: AppBar(
-              // leading: Column(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     IconButton(
-              //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-              //       onPressed: () => Navigator.of(context).pop(),
-              //     ),
-              //   ],
-              // ), 
-              title: Container(
-                margin: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(_title,style: TextStyle(
-                          fontSize: 20,
-                        ),
-                    ),
-                    
-                  ],
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(height * 0.10),
+          child: AppBar(
+            // leading: Column(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     IconButton(
+            //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+            //       onPressed: () => Navigator.of(context).pop(),
+            //     ),
+            //   ],
+            // ),
+            title: Center(
+              child: Text(
+                _title,
+                style: TextStyle(
+                  fontSize: 20,
                 ),
               ),
-              actions: <Widget>[
-          // Using Stack to show Notification Badge
-           Column(
-             mainAxisAlignment: MainAxisAlignment.end,
-             children: [
-               Container(
-                 margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                 child: Stack(
-                  children: <Widget>[
-                     IconButton(icon: Icon(Icons.notifications,size: 30,), onPressed: () {
-                      setState(() {
-                        counter = 0;
-                      });
-                    }),
-                     Positioned(
-                      right: 11,
-                      top: 11,
-                      child:  Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration:  BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  ],
-          ),
-               ),
-             ],
-           ),
-        ],
-              centerTitle: true,
-              toolbarHeight:100,
-              backgroundColor: const Color(0xff1042aa), 
             ),
-      ),
-      body: Container(
+            actions: <Widget>[
+              // Using Stack to show Notification Badge
+              Center(
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  child: Stack(
+                    children: <Widget>[
+                      IconButton(
+                          icon: Icon(
+                            Icons.notifications,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              counter = 0;
+                            });
+                          }),
+                      Positioned(
+                        right: 11,
+                        top: 11,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            centerTitle: true,
+            toolbarHeight: 100,
+            backgroundColor: const Color(0xff1042aa),
+          ),
+        ),
+        body: Container(
           margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment:MainAxisAlignment.start,
-            children : [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
                 Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Email",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text(
+                    "Name",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"),
                   ),
                 ),
                 Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(useremail,style :
-                     const TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: Text(
+                    name,
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 107, 106, 106),
+                        fontSize: 16,
+                        fontFamily: "SFPRO regular"),
                   ),
                 ),
                 Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Date of Birth",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text(
+                    "Email",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"),
                   ),
                 ),
                 Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("10-02-2022",style :
-                     TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: Text(
+                    useremail,
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 107, 106, 106),
+                        fontSize: 16,
+                        fontFamily: "SFPRO regular"),
+                  ),
+                ),
+                // Container(
+                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                //   child: const Text("Date of Birth",style:
+                //     TextStyle(
+                //       color: Colors.black,
+                //       fontSize: 18,
+                //       fontFamily: "SFPRO regular"
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                //   child: const Text("10-02-2022",style :
+                //      TextStyle(
+                //       color: Color.fromARGB(255, 107, 106, 106),
+                //       fontSize: 16,
+                //       fontFamily: "SFPRO regular"
+                //     ),
+                //   ),
+                // ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: Text(
+                    gender,
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"),
                   ),
                 ),
                 Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(gender,style: 
-                    const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child:  Text(
+                    dropdownvalue,
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 107, 106, 106),
+                        fontSize: 16,
+                        fontFamily: "SFPRO regular"),
                   ),
                 ),
+                // Container(
+                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                //   child: const Text("Pancard",style:
+                //     TextStyle(
+                //       color: Colors.black,
+                //       fontSize: 18,
+                //       fontFamily: "SFPRO regular"
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                //   child: const Text("ASFH10234",style :
+                //      TextStyle(
+                //       color: Color.fromARGB(255, 107, 106, 106),
+                //       fontSize: 16,
+                //       fontFamily: "SFPRO regular"
+                //     ),
+                //   ),
+                // ),
                 Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Male",style :
-                     TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
+                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                  child: const Text(
+                    "Password",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontFamily: "SFPRO regular"),
                   ),
                 ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Pancard",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("ASFH10234",style :
-                     TextStyle(
-                      color: Color.fromARGB(255, 107, 106, 106),
-                      fontSize: 16,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Container(
-                   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text("Password",style: 
-                    TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: "SFPRO regular"
-                    ),
-                  ),
-                ),
-                Row(
+                if(user_type == "normal") Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                       margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                       child: GestureDetector(
-                        onTap: (){
-                          print("change password");
+                        onTap: () {
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Changepassword()),
+                        );
                         },
-                        child: const Text("change password",style :
-                           TextStyle(
+                        child: const Text(
+                          "change password",
+                          style: TextStyle(
                             color: Color.fromARGB(255, 10, 109, 201),
                             fontSize: 16,
                             fontFamily: "SFPRO regular",
                             decoration: TextDecoration.underline,
-                            
                           ),
-                          
-
                         ),
                       ),
                     ),
-                   
                   ],
                 ),
-                 Container(
+                if(user_type == "normal")Container(
                   width: width * 0.90,
-                   height: height * 0.07,
-                   child: ElevatedButton(
-                      
-                       onPressed: (){
-                         Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) =>  const Settings_edit()),
+                  height: height * 0.07,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Settings_edit()),
                         );
-                      }, 
-                      child: const Text("Edit",style: TextStyle(
-                        fontSize: 20,
-                      ),),
-                       style: ElevatedButton.styleFrom(
-                          primary:  Color(0xffffa300),
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(color: Colors.white),
-                            borderRadius:  BorderRadius.circular(8.0),
-                         ),
-                         
-                       )
-                      ),
-                 ),
-            ]
-          ),
-      ),
-      drawer: Drawer(  
-        child: Container(
-          padding: EdgeInsets.fromLTRB(30, 10, 10, 10),
-          color: Color(0xff1042aa),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.money,color: Colors.white,),
-                    Text(' My Balance',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.share_rounded,color: Colors.white,),
-                    Text(' Refer & Earn',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.grade_outlined,color: Colors.white,),
-                    Text(' My Level',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.gps_fixed,color: Colors.white,),
-                    Text(' Find my Friends',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Settings()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.settings,color: Colors.white,),
-                      Text(' My Settings',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
+                      },
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(
+                          fontSize: 20,
                         ),
                       ),
-                    ],
-                  )
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xffffa300),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      )),
                 ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.help_center,color: Colors.white,),
-                    Text(' Help Desk',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.account_box_outlined,color: Colors.white,),
-                    Text(' About App',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.money_outlined,color: Colors.white,),
-                    Text(' Terms & condition',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.logout_outlined,color: Colors.white,),
-                    Text(' Logout',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-            ]
-          ),
+              ]),
         ),
-      ), 
-    );
-   }
+        drawer: DrawerWidget());
+  }
 }

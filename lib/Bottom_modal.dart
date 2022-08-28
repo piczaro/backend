@@ -225,7 +225,7 @@ class _Bottommodal extends State<Bottommodal> {
                         onPressed: () {
                           Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) =>  const Dashboard()),
+                                    MaterialPageRoute(builder: (context) =>  const Dashboard(index: 0,profileindex: 0,)),
                       );
                         },
                         child: const Text("Validate Otp",style: TextStyle(

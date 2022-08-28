@@ -20,131 +20,172 @@ import 'Notifications.dart';
 import 'Mybalance.dart';
 import 'Refer_earn.dart';
 import 'Profile.dart';
-class Dashboard extends StatefulWidget {
-  
-  const Dashboard({Key? key, }) : super(key: key);
-  
-  @override
-  
-   
+import 'mydrawer.dart';
 
-  
+class Dashboard extends StatefulWidget {
+  final int index;
+  final int profileindex;
+  const Dashboard({
+    Key? key,
+    required this.index,required this.profileindex,
+  }) : super(key: key);
+
+  @override
   State<Dashboard> createState() => _Dashboard();
 }
 
 class _Dashboard extends State<Dashboard> {
-  int activeindex =0;
+  // late profileindex _translatorModel = widget.transModel;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int activeindex = 0;
+  late Dashboard _profileindex ;
   List<int> list = [1, 2, 3, 4, 5];
   int counter = 2;
   String counttime = "Loading";
   // Timer? countdownTimer;
   Duration myDuration = Duration(days: 5);
-  String _title =  "Home";
+  String _title = "Home";
   int _selectedIndex = 0;
+   @override
+  initState() {
+    _title = 'Home';
+    _selectedIndex = widget.index;
+    // _profileindex = widget.profileindex;
+  }
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
+  late List<Widget> _widgetOptions = [
     Home(),
     Globe_contest(),
     Feed(),
+    Profile(index: 0,),
+    Profile(index: 0,),
+    
     Text(
       'Index 3: Settings',
       style: optionStyle,
     ),
-     Profile(),
-     Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
   ];
-   @override
-  initState(){
-    _title = 'Home';
-  }
+  
+  final pages = [
+    Home(),
+    Globe_contest(),
+    Feed(),
+    Profile(index: 0,),
+    Profile(index: 0,),
+  ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      switch(index) { 
-       case 0: { _title = 'Home'; } 
-       break; 
-       case 1: { _title = 'My Contests'; } 
-       break;
-       case 2: { _title = 'Feed'; } 
-       break;
-       case 3: { _title = 'Clients'; } 
-       break;
-       case 4: { _title = 'My Profile'; } 
-       break; 
-      } 
+      switch (index) {
+        case 0:
+          {
+            _title = 'Home';
+          }
+          break;
+        case 1:
+          {
+            _title = 'My Contests';
+          }
+          break;
+        case 2:
+          {
+            _title = 'Feed';
+          }
+          break;
+        case 3:
+          {
+            _title = 'My Profile';
+            // _scaffoldKey.currentState!.openDrawer();
+          }
+          break;
+        case 4:
+          {
+            _title = 'My Profile';
+          }
+          break;
+      }
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"), "Completed", "d :", "h :", "m :", "s", "D ", "H ", "M", "S");
+    counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"),
+        "Completed", "d :", "h :", "m :", "s", "D ", "H ", "M", "S");
     double width = MediaQuery.of(context).size.width;
-      double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
     String strDigits(int n) => n.toString().padLeft(2, '0');
     final days = strDigits(myDuration.inDays); // <-- SEE HERE
     final hours = strDigits(myDuration.inHours.remainder(24));
     final minutes = strDigits(myDuration.inMinutes.remainder(60));
     final seconds = strDigits(myDuration.inSeconds.remainder(60));
     return Scaffold(
-       
+      key: _scaffoldKey,
+      endDrawerEnableOpenDragGesture: false,
       appBar: PreferredSize(
-            preferredSize:  Size.fromHeight(height * 0.10),
-            child: AppBar(
-              // leading: Column(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     IconButton(
-              //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-              //       onPressed: () => Navigator.of(context).pop(),
-              //     ),
-              //   ],
-              // ), 
-              title: Container(
-                margin: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(_title,style: TextStyle(
-                          fontSize: 20,
-                        ),
-                    ),
-                    
-                  ],
-                ),
+        preferredSize: Size.fromHeight(height * 0.10),
+        child: AppBar(
+          // leading: Column(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   children: [
+          //     IconButton(
+          //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+          //       onPressed: () => Navigator.of(context).pop(),
+          //     ),
+          //   ],
+          // ),
+          title: Center(
+            child: Text(
+              _title,
+              style: TextStyle(
+                fontSize: 20,
               ),
-              actions: <Widget>[
-          // Using Stack to show Notification Badge
-           Column(
-             mainAxisAlignment: MainAxisAlignment.end,
-             children: [
-               InkWell(
-                onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Notifications()),
-                    );
+            ),
+            // child: Column(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Text(
+            //       _title,
+            //       style: TextStyle(
+            //         fontSize: 20,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+          ),
+          actions: <Widget>[
+            // Using Stack to show Notification Badge
+            Center(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Notifications()),
+                  );
                 },
-                 child: Container(
-                   margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                   child: Stack(
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  child: Stack(
                     children: <Widget>[
-                       IconButton(icon: Icon(Icons.notifications,size: 30,), onPressed: () {
-                        setState(() {
-                          counter = 0;
-                        });
-                      }),
-                       Positioned(
+                      IconButton(
+                          icon: Icon(
+                            Icons.notifications,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              counter = 0;
+                            });
+                          }),
+                      Positioned(
                         right: 11,
                         top: 11,
-                        child:  Container(
+                        child: Container(
                           padding: const EdgeInsets.all(2),
-                          decoration:  BoxDecoration(
+                          decoration: BoxDecoration(
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -163,344 +204,52 @@ class _Dashboard extends State<Dashboard> {
                         ),
                       )
                     ],
-                         ),
-                 ),
-               ),
-             ],
-           ),
-        ],
-              centerTitle: true,
-              toolbarHeight:100,
-              backgroundColor: const Color(0xff1042aa), 
+                  ),
+                ),
+              ),
             ),
+          ],
+          centerTitle: true,
+          toolbarHeight: 100,
+          backgroundColor: const Color(0xff1042aa),
+        ),
       ),
-          
-        
-     
       body: _widgetOptions.elementAt(_selectedIndex),
-      
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-           icon: Icon(FontAwesomeIcons.home), 
+            icon: Icon(FontAwesomeIcons.home),
             label: 'Home',
             backgroundColor: Color.fromARGB(255, 255, 255, 255),
           ),
           BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.star), 
+            icon: FaIcon(FontAwesomeIcons.star),
             label: 'My Match',
             backgroundColor: Colors.green,
           ),
           BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.rss),
+            icon: FaIcon(FontAwesomeIcons.rss),
             label: 'Feed',
             backgroundColor: Colors.purple,
           ),
+          // BottomNavigationBarItem(
+          //   icon: FaIcon(FontAwesomeIcons.boxesStacked),
+          //   label: 'Others',
+          //   backgroundColor: Colors.pink,
+          // ),
           BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.boxesStacked), 
-            label: 'Others',
-            backgroundColor: Colors.pink,
-          ),
-          BottomNavigationBarItem(
-            icon:FaIcon(FontAwesomeIcons.user), 
+            icon: FaIcon(FontAwesomeIcons.user),
             label: 'Profile',
             backgroundColor: Colors.pink,
           ),
         ],
-       
         selectedItemColor: Color.fromARGB(255, 0, 0, 0),
         unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
         showUnselectedLabels: true,
-        iconSize: 35,
-         onTap: _onItemTapped,
+        iconSize: 30,
+        onTap: _onItemTapped,
       ),
-      drawer: Drawer(  
-        child: Container(
-          padding: EdgeInsets.fromLTRB(30, 10, 10, 10),
-          color: Color(0xff1042aa),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Mybalance()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.money,color: Colors.white,),
-                      Text(' My Balance',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Refer_earn()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.share_rounded,color: Colors.white,),
-                      Text(' Refer & Earn',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.grade_outlined,color: Colors.white,),
-                    Text(' My Level',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Find_my_friends()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.gps_fixed,color: Colors.white,),
-                      Text(' Find my Friends',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Settings()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.settings,color: Colors.white,),
-                      Text(' My Settings',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Help_support()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.help_center,color: Colors.white,),
-                      Text(' Help Desk',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const About()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.account_box_outlined,color: Colors.white,),
-                      Text(' About App',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                 onTap: () {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  const Terms_condition()),
-                    );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.money_outlined,color: Colors.white,),
-                      Text(' Terms & condition',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.logout_outlined,color: Colors.white,),
-                    Text(' Logout',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-            ]
-          ),
-        ),
-      ),   
-        
+      drawer: Drawer(child: DrawerWidget()),
     );
-    
   }
- 
 }
