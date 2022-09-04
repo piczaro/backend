@@ -1,5 +1,6 @@
 import 'package:date_count_down/countdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -15,6 +16,9 @@ import 'mydrawer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:convert';
 import 'Login.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:date_count_down/countdown.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -51,7 +55,7 @@ class _Home extends State<Home> {
       final storage = new LocalStorage('my_data');
       final token = await storage.getItem('jwt_token');
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/category_listing'),
+        Uri.parse('${dotenv.env['API_URL']}/api/category_listing'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
@@ -84,13 +88,53 @@ class _Home extends State<Home> {
     }
   }
 
+  Future<List<dynamic>> ongoingSlider() async {
+    try {
+      final storage = new LocalStorage('my_data');
+      final token = await storage.getItem('jwt_token');
+      final user_id = await storage.getItem('user_id');
+      final response = await http.get(
+        Uri.parse(
+            '${dotenv.env['API_URL']}/api/user_ongoing_upcoming_contest/${user_id}'),
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${token}',
+        },
+      );
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body)['status'];
+        print(jsonData);
+        if (jsonDecode(response.body)['status'] ?? true) {
+          var data = jsonDecode(response.body)['data'].length;
+
+          for (var i = 0; i < data; i++) {
+            list.add(i);
+          }
+          print(list);
+          return jsonDecode(response.body)['data'];
+        } else if (jsonDecode(response.body)['status'] ?? false) {}
+
+        return jsonDecode(response.body)['data'];
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to load album');
+      }
+    } on Exception catch (_) {
+      return [];
+      print('never reached');
+    }
+  }
+
   int activeindex = 0;
-  List<int> list = [1, 2, 3, 4, 5];
+  List<int> list = [];
   int counter = 2;
   String counttime = "Loading";
   // Timer? countdownTimer;
   Duration myDuration = const Duration(days: 5);
   late Future<List<dynamic>> futureAlbum;
+  late Future<List<dynamic>> sliDer;
   Future<bool> checkLoginStatus() async {
     final storage = new LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
@@ -99,7 +143,7 @@ class _Home extends State<Home> {
     };
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/auth_token_check'),
+      Uri.parse('${dotenv.env['API_URL']}/api/auth_token_check'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -128,6 +172,7 @@ class _Home extends State<Home> {
     super.initState();
     // checkLoginStatus();
     futureAlbum = loaddata();
+    sliDer = ongoingSlider();
   }
 
   @override
@@ -151,191 +196,236 @@ class _Home extends State<Home> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "My Contest",
-                  style: TextStyle(
-                    fontFamily: 'SFPRO semibold',
-                    color: Color.fromARGB(255, 5, 5, 5),
-                    fontSize: 25,
-                  ),
-                ),
-                InkWell(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: const Text(
-                      "View all",
-                      style: TextStyle(
-                        fontFamily: 'SFPRO semibold',
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 15,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ),
+                // InkWell(
+                //   child: Container(
+                //     margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                //     child: const Text(
+                //       "View all",
+                //       style: TextStyle(
+                //         fontFamily: 'SFPRO semibold',
+                //         color: Color.fromARGB(255, 0, 0, 0),
+                //         fontSize: 15,
+                //         decoration: TextDecoration.underline,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                    disableCenter: true,
-                    enableInfiniteScroll: true,
-                    autoPlay: true,
-                    height: 200,
-                    autoPlayInterval: const Duration(seconds: 3),
-                    autoPlayAnimationDuration:
-                        const Duration(milliseconds: 800),
-                    viewportFraction: 1,
-                    onPageChanged: (index, reason) =>
-                        {setState((() => activeindex = index))}),
-                items: list
-                    .map((item) => Container(
-                          margin: const EdgeInsets.fromLTRB(25, 10, 25, 10),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color:
-                                      const Color.fromARGB(255, 211, 211, 211)),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(15))),
-                          child: Column(children: [
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 10, 10, 10),
-                                    child: Text("End In : " + counttime),
-                                  ),
-                                ]),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: Text(
-                                    "Contest Name",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                      fontFamily: "SFPRO regular",
+          FutureBuilder(
+              future: sliDer,
+              builder: (context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  int l = snapshot.data.length;
+                  if (l == 0) {
+                    return Center(
+                        child: Text(
+                      "",
+                      style: TextStyle(fontSize: 20),
+                    ));
+                  }
+                  var carouselSlider = snapshot.data;
+                  print(carouselSlider);
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "My Contest",
+                        style: TextStyle(
+                          fontFamily: 'SFPRO semibold',
+                          color: Color.fromARGB(255, 5, 5, 5),
+                          fontSize: 25,
+                        ),
+                      ),
+                      CarouselSlider(
+                        options: CarouselOptions(
+                            disableCenter: true,
+                            enableInfiniteScroll: true,
+                            autoPlay: true,
+                            height: 200,
+                            autoPlayInterval: const Duration(seconds: 3),
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            viewportFraction: 1,
+                            onPageChanged: (index, reason) =>
+                                {setState((() => activeindex = index))}),
+                        items: carouselSlider
+                            .map<Widget>((item) => Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(25, 10, 25, 10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: const Color.fromARGB(
+                                              255, 211, 211, 211)),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15))),
+                                  child: Column(children: [
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text("End In : "),
+                                          CountdownTimer(
+                                            endTime: DateTime.parse(
+                                                    "${item['end_datetime']}")
+                                                .millisecondsSinceEpoch,
+                                            widgetBuilder: (_, time) {
+                                              if (time == null) {
+                                                return Text('Game over');
+                                              }
+                                              return Text(
+                                                  '${time.hours}h:${time.min}m:${time.sec}s');
+                                            },
+                                          ),
+                                        ]),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              10, 0, 10, 10),
+                                          child: Text(
+                                            '${item['name']}',
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: Colors.black,
+                                              fontFamily: "SFPRO regular",
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    child: RichText(
-                                      text: const TextSpan(
-                                        text: "Contest Name",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                              text: ' Live',
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 163, 84, 80))),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 0, 10, 0),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                text:
+                                                    '${item['category_name']}',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text: ' Live',
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              163,
+                                                              84,
+                                                              80))),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 0, 10, 10),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                text: "Price",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 17),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                          ' ₹ ${item['amount']}',
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0),
+                                                        fontSize: 25,
+                                                        fontFamily:
+                                                            "SFPRO BOLD",
+                                                      )),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 10, 10, 10),
+                                            child: RichText(
+                                              text: const TextSpan(
+                                                text: "No. of slot : ",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text: ' 2',
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 231, 196, 41),
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            "SFPRO BOLD",
+                                                      )),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          const VerticalDivider(
+                                            color: Color.fromARGB(
+                                                255, 180, 180, 180),
+                                            thickness: 2,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                25, 10, 10, 10),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                text: "Contest Type :",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                          '${item['contest_type']}',
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 231, 196, 41),
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            "SFPRO BOLD",
+                                                      )),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ]),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 0, 10, 10),
-                                    child: RichText(
-                                      text: const TextSpan(
-                                        text: "Price",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 17),
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                              text: ' ₹ 200',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                                fontSize: 25,
-                                                fontFamily: "SFPRO BOLD",
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                            IntrinsicHeight(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 10, 10, 10),
-                                    child: RichText(
-                                      text: const TextSpan(
-                                        text: "No. of slot : ",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 15),
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                              text: ' 2',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 231, 196, 41),
-                                                fontSize: 15,
-                                                fontFamily: "SFPRO BOLD",
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const VerticalDivider(
-                                    color: Color.fromARGB(255, 180, 180, 180),
-                                    thickness: 2,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        25, 10, 10, 10),
-                                    child: RichText(
-                                      text: const TextSpan(
-                                        text: "Contest Type :",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 15),
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                              text: ' Express',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 231, 196, 41),
-                                                fontSize: 15,
-                                                fontFamily: "SFPRO BOLD",
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ]),
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 1),
-              builindicator(),
-            ],
-          ),
+                                  ]),
+                                ))
+                            .toList(),
+                      ),
+                      const SizedBox(height: 1),
+                      builindicator(),
+                    ],
+                  );
+                }
+              }),
           Container(
             margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
             child: Column(
@@ -419,7 +509,7 @@ class _Home extends State<Home> {
                                         // FadeInImage(
                                         //   placeholder: circularProgressIndicator,
                                         //   image: NetworkImage(
-                                        //       "http://10.0.2.2:8000/category_images/${snapshot.data[index]['file']}"),
+                                        //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}"),
                                         // ),
                                         CachedNetworkImage(
                                           placeholder: (context, url) =>
@@ -429,7 +519,7 @@ class _Home extends State<Home> {
                                           errorWidget: (context, url, error) =>
                                               new Icon(Icons.error),
                                           imageUrl:
-                                              'http://10.0.2.2:8000/category_images/${snapshot.data[index]['file']}',
+                                              '${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}',
                                           maxHeightDiskCache: 100,
                                           maxWidthDiskCache: 130,
                                           width: 110,
@@ -437,7 +527,7 @@ class _Home extends State<Home> {
                                         ),
                                         // CachedNetworkImage(
                                         //   imageUrl:
-                                        //       "http://10.0.2.2:8000/category_images/${snapshot.data[index]['file']}",
+                                        //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}",
                                         //   placeholder: (context, url) =>
                                         //       const CircleAvatar(
                                         //     backgroundColor: Colors.amber,
@@ -447,11 +537,11 @@ class _Home extends State<Home> {
                                         // FadeInImage.assetNetwork(
                                         //   placeholder: 'images/loading.gif',
                                         //   image:
-                                        //       "http://10.0.2.2:8000/category_images/${snapshot.data[index]['file']}",
+                                        //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}",
                                         //   width: 110,
                                         //   height: 55,
                                         // ),
-                                        // Image.network("http://10.0.2.2:8000/category_images/${snapshot.data[index]['file']}"
+                                        // Image.network("${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}"
                                         //     ,
                                         //     width: 110,
                                         //     height: 65,

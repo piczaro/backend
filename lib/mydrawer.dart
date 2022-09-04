@@ -290,7 +290,7 @@ class DrawerWidget extends StatelessWidget {
                 if (user_type == 'google') {
                   
                   await GoogleSignInApi.signout().whenComplete(() async {
-                    await storage.deleteItem("token");
+                    await storage.deleteItem("jwt_token");
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
@@ -298,7 +298,7 @@ class DrawerWidget extends StatelessWidget {
                         (Route<dynamic> route) => false);
                   });
                 } else {
-                  await storage.deleteItem("token");
+                  await storage.deleteItem("jwt_token");
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

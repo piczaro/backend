@@ -22,7 +22,7 @@ import 'Contested.dart';
 import 'package:flutter/gestures.dart';
 import 'Dashboard.dart';
 import 'dart:io';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Contest extends StatefulWidget {
   final int id;
   const Contest({Key? key, required this.id}) : super(key: key);
@@ -38,7 +38,7 @@ class _Contest extends State<Contest> {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/category_contest/${widget.id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/category_contest/${widget.id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -470,7 +470,7 @@ class _Contest_pay extends State<Contest_pay> {
     final token = await storage.getItem('jwt_token');
      final user_id = await storage.getItem('user_id');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/contest_details/${widget.id}/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/contest_details/${widget.id}/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -568,7 +568,7 @@ class _Contest_pay extends State<Contest_pay> {
     try {
       print(jsonMap_body);
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/pay_contest_amount/${user_id}'),
+        Uri.parse('${dotenv.env['API_URL']}/api/pay_contest_amount/${user_id}'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
@@ -621,7 +621,7 @@ class _Contest_pay extends State<Contest_pay> {
       final user_id = await storage.getItem('user_id');
       final response = http.MultipartRequest(
         "POST",
-        Uri.parse('http://10.0.2.2:8000/api/create_participant'),
+        Uri.parse('${dotenv.env['API_URL']}/api/create_participant'),
         // headers: {
         //   'Content-type': 'application/json',
         //   'Accept': 'application/json',

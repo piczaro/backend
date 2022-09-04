@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Feed extends StatefulWidget {
   const Feed({Key? key}) : super(key: key);
@@ -19,6 +20,9 @@ class Feed extends StatefulWidget {
 }
 
 class _Feed extends State<Feed> {
+  final storage = LocalStorage('my_data');
+
+  int UserId = 0;
   Future<List<dynamic>> loaddata() async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
@@ -26,7 +30,7 @@ class _Feed extends State<Feed> {
     final username = await storage.getItem('username');
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/participant_listing/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/participant_listing/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -49,6 +53,7 @@ class _Feed extends State<Feed> {
   void initState() {
     super.initState();
     futureAlbum = loaddata();
+    UserId = storage.getItem('user_id');
   }
 
   int counter = 2;
@@ -79,7 +84,7 @@ class _Feed extends State<Feed> {
     };
     final response = await http.post(
       Uri.parse(
-          'http://10.0.2.2:8000/api/participant_reactions/${participant_id}'),
+          '${dotenv.env['API_URL']}/api/participant_reactions/${participant_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -111,7 +116,7 @@ class _Feed extends State<Feed> {
     };
     final response = await http.post(
       Uri.parse(
-          'http://10.0.2.2:8000/api/participant_reactions/${participant_id}'),
+          '${dotenv.env['API_URL']}/api/participant_reactions/${participant_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -142,7 +147,7 @@ class _Feed extends State<Feed> {
     };
     final response = await http.post(
       Uri.parse(
-          'http://10.0.2.2:8000/api/participant_reactions/${participant_id}'),
+          '${dotenv.env['API_URL']}/api/participant_reactions/${participant_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -166,7 +171,7 @@ class _Feed extends State<Feed> {
     final user_id = await storage.getItem('user_id');
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/user_follow_create/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/user_follow_create/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -184,9 +189,59 @@ class _Feed extends State<Feed> {
             timeInSecForIosWeb: 1,
             backgroundColor: Color.fromARGB(255, 224, 36, 36),
             textColor: Color.fromARGB(255, 255, 255, 255));
+        setState(() {
+          futureAlbum = loaddata();
+        });
       } else {
         Fluttertoast.showToast(
             msg: post['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromARGB(255, 37, 167, 48),
+            textColor: Color.fromARGB(255, 255, 255, 255));
+        setState(() {
+          futureAlbum = loaddata();
+        });
+      }
+      print(post);
+    } else if (response.statusCode == 401) {
+    } else {
+      throw Exception('Failed to create album.');
+    }
+  }
+
+  Future<http.Response?> userUnFollow(int id) async {
+    Map<String, dynamic> jsonMap_body = {"following_id": id};
+    final storage = LocalStorage('my_data');
+    final token = await storage.getItem('jwt_token');
+    final user_id = await storage.getItem('user_id');
+
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/api/user_follow_remove/${user_id}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token}',
+      },
+      body: json.encode(jsonMap_body),
+    );
+    if (response.statusCode == 200) {
+      var post = jsonDecode(response.body);
+      if (post['message'] == "Already Followed") {
+        Fluttertoast.showToast(
+            msg: post['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromARGB(255, 224, 36, 36),
+            textColor: Color.fromARGB(255, 255, 255, 255));
+        setState(() {
+          futureAlbum = loaddata();
+        });
+      } else if (post['message'] == "User Deleted Sucessfully") {
+        Fluttertoast.showToast(
+            msg: "Unfollowed",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -211,7 +266,7 @@ class _Feed extends State<Feed> {
   //     "hearts": hearts
   //   };
   //   final response = await http.post(
-  //     Uri.parse('http://10.0.2.2:8000/api/login'),
+  //     Uri.parse('${dotenv.env['API_URL']}/api/login'),
   //     headers: {
   //       'Content-type': 'application/json',
   //       'Accept': 'application/json'
@@ -296,7 +351,10 @@ class _Feed extends State<Feed> {
                                   radius: 30.0,
                                   // backgroundImage:
                                   child: CachedNetworkImage(
-                                    imageUrl: snapshot.data[index]['photoUrl'] != null ? snapshot.data[index]['photoUrl'] : "https://via.placeholder.com/150",
+                                    imageUrl:
+                                        snapshot.data[index]['photoUrl'] != null
+                                            ? snapshot.data[index]['photoUrl']
+                                            : "https://via.placeholder.com/150",
                                     imageBuilder: (context, imageProvider) =>
                                         Container(
                                       width: 110.0,
@@ -356,36 +414,59 @@ class _Feed extends State<Feed> {
                                   ),
                                 ],
                               ),
-                              PopupMenuButton(
-                                  initialValue: 2,
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.more_vert,
-                                      color: Colors.grey,
+                              if (UserId != snapshot.data[index]['user_id'])
+                                PopupMenuButton(
+                                    initialValue: 2,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.more_vert,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  itemBuilder: (_) {
-                                    return [
-                                      PopupMenuItem(
-                                          value: 1,
-                                          child: GestureDetector(
-                                              onTap: () {
-                                                userFollow(snapshot.data[index]
-                                                    ['user_id']);
-                                              },
-                                              child: Text("Follow"))),
-                                      PopupMenuItem(child: Text("Report"))
-                                    ];
-                                  },
-                                  onSelected: (value) {
-                                    if (value == 1) {
-                                     userFollow(snapshot.data[index]
-                                                    ['user_id']);
-                                      // if value 2 show dialog
-                                    } else if (value == 2) {
-                                      
-                                    }
-                                  }),
+                                    itemBuilder: (_) {
+                                      return [
+                                        if (snapshot.data[index]['followed'] !=
+                                                "True" &&
+                                            UserId !=
+                                                snapshot.data[index]['user_id'])
+                                          PopupMenuItem(
+                                              value: 1,
+                                              child: GestureDetector(
+                                                  onTap: () {
+                                                    userFollow(
+                                                        snapshot.data[index]
+                                                            ['user_id']);
+                                                  },
+                                                  child: Text("Follow"))),
+                                        if (snapshot.data[index]['followed'] ==
+                                                "True" &&
+                                            UserId !=
+                                                snapshot.data[index]['user_id'])
+                                          PopupMenuItem(
+                                              value: 2,
+                                              child: GestureDetector(
+                                                  onTap: () {
+                                                    userUnFollow(
+                                                        snapshot.data[index]
+                                                            ['user_id']);
+                                                  },
+                                                  child: Text("UnFollow"))),
+                                        // if (UserId !=
+                                        //     snapshot.data[index]['user_id'])
+                                        //   PopupMenuItem(child: Text("Report"))
+                                      ];
+                                    },
+                                    onSelected: (value) {
+                                      if (value == 1) {
+                                        userFollow(
+                                            snapshot.data[index]['user_id']);
+
+                                        // if value 2 show dialog
+                                      } else if (value == 2) {
+                                        userUnFollow(
+                                            snapshot.data[index]['user_id']);
+                                      }
+                                    }),
                             ],
                           ),
                         ),
@@ -399,7 +480,7 @@ class _Feed extends State<Feed> {
                               errorWidget: (context, url, error) =>
                                   new Icon(Icons.error),
                               imageUrl:
-                                  'http://10.0.2.2:8000/participant_images/${snapshot.data[index]['image_path']}',
+                                  '${dotenv.env['API_URL']}/participant_images/${snapshot.data[index]['image_path']}',
                               maxHeightDiskCache: 200,
                               maxWidthDiskCache: 500,
                             ),

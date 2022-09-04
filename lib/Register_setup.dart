@@ -7,6 +7,7 @@ import 'package:localstorage/localstorage.dart';
 import 'dart:convert';
 import 'google_signin.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Register_setup extends StatefulWidget {
   const Register_setup({Key? key}) : super(key: key);
@@ -39,16 +40,15 @@ class _Register_setup extends State<Register_setup> {
         "displayName": user?.displayName,
         "email": user?.email,
         "id": "117824256095574502399",
-        "photoUrl":
-            user?.photoUrl,
+        "photoUrl": user?.photoUrl,
         "referal_code": "",
         "socialAuth": "google",
         "username": username,
         "gender": "Male",
-        "user_type" : "google"
+        "user_type": "google"
       };
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/register'),
+        Uri.parse('${dotenv.env['API_URL']}/api/register'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json'
@@ -58,6 +58,7 @@ class _Register_setup extends State<Register_setup> {
       print(jsonDecode(response.body));
       if (response.statusCode == 200) {
         var post = jsonDecode(response.body);
+        print(post);
         if (post['message'] == 'Email Already Exists') {
           setState(() {
             isLoading = false;
@@ -92,13 +93,69 @@ class _Register_setup extends State<Register_setup> {
               MaterialPageRoute(builder: (context) => const LoginPage()),
             );
           });
+        } else if (jsonDecode(response.body)['username'] != null) {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg:  jsonDecode(response.body)['username'][0],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Color.fromARGB(255, 194, 31, 31),
+              textColor: Colors.white);
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          });
         }
-      } else {
-        throw Exception('Failed to create album.');
+      } 
+      else if (response.statusCode == 400){
+        var post = jsonDecode(response.body);
+        print(post);
+        if (post['message'] == 'Email Already Exists') {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg: post['message'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          });
+        } 
+      }     
+      else {
+        var post = jsonDecode(response.body);
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(
+            msg: post,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromARGB(255, 194, 31, 31),
+            textColor: Colors.white);
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        });
       }
     } else if (register_type == 'facebook') {
-      final LoginResult result = await FacebookAuth.instance.login();
-
+      final  result = await FacebookAuth.instance.login();
+      print(result);
       // Map<String, dynamic> jsonMap_body = {
       //   "displayName":result.,
       //   "email":user?.email,
@@ -110,7 +167,7 @@ class _Register_setup extends State<Register_setup> {
       //   "gender" : "Male"
       // };
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/register'),
+        Uri.parse('${dotenv.env['API_URL']}/api/register'),
         // headers: {
         //     'Content-type': 'application/json',
         //     'Accept': 'application/json'
@@ -163,7 +220,7 @@ class _Register_setup extends State<Register_setup> {
         "gender": "Male"
       };
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/register'),
+        Uri.parse('${dotenv.env['API_URL']}/api/register'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json'
@@ -254,7 +311,7 @@ class _Register_setup extends State<Register_setup> {
 
     // final response = await http.post(
 
-    //   Uri.parse('http://10.0.2.2:8000/api/register'),
+    //   Uri.parse('${dotenv.env['API_URL']}/api/register'),
     //   headers: {
     //        'Content-type': 'application/json',
     //        'Accept': 'application/json'
@@ -520,7 +577,7 @@ class _Register_setup extends State<Register_setup> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                       FocusScope.of(context).unfocus();
+                                      FocusScope.of(context).unfocus();
                                       setState(() {
                                         if (man) {
                                           man = false;
@@ -547,7 +604,7 @@ class _Register_setup extends State<Register_setup> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                       FocusScope.of(context).unfocus();
+                                      FocusScope.of(context).unfocus();
                                       setState(() {
                                         if (woman) {
                                           woman = false;
@@ -574,7 +631,7 @@ class _Register_setup extends State<Register_setup> {
                                   ),
                                   InkWell(
                                     onTap: () {
-                                       FocusScope.of(context).unfocus();
+                                      FocusScope.of(context).unfocus();
                                       setState(() {
                                         if (mixed) {
                                           mixed = false;

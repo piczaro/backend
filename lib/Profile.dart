@@ -20,6 +20,7 @@ import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Profile extends StatefulWidget {
   final int index;
@@ -30,12 +31,16 @@ class Profile extends StatefulWidget {
 }
 
 class _Profile extends State<Profile> with TickerProviderStateMixin {
+  int post = 0;
+  int Point = 0;
+  int followers = 0;
+  int followings = 0;
   Future<Map<String, dynamic>> loaddata() async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final user_id = await storage.getItem('user_id');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/user_details/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/user_details/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -45,6 +50,13 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
     );
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body)['data'];
+      var user_count = jsonDecode(response.body)['user_count'];
+      setState(() {
+        post = user_count['post_count'];
+        Point = user_count['total_amount'];
+        followers = user_count['user_followers'];
+        followings = user_count['follow_user'];
+      });
       print(jsonData);
     } else {}
     return jsonDecode(response.body)['data'];
@@ -66,6 +78,17 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
   ];
   int counter = 0;
   int activeindex = 0;
+  GlobalKey<_Profile> _myKey = GlobalKey();
+  void _passedFunction(String input) {
+   
+      print(input);
+    
+  }
+
+  void  refresh()async{
+    print("loded");
+    
+  }
 
   String counttime = "Loading";
   // Timer? countdownTimer;
@@ -100,6 +123,13 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     } else {
+                      var level;
+                      if (snapshot.data['level'] != null) {
+                        level = snapshot.data['level'];
+                      } else {
+                        level = 0;
+                      }
+
                       return Container(
                         decoration: BoxDecoration(
                           color: Color(0xff1042aa),
@@ -116,7 +146,9 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                                 child: CircleAvatar(
                                   radius: 30.0,
                                   child: CachedNetworkImage(
-                                    imageUrl: snapshot.data['photoUrl'] != null ? snapshot.data['photoUrl'] :  'https://picsum.photos/200',
+                                    imageUrl: snapshot.data['photoUrl'] != null
+                                        ? snapshot.data['photoUrl']
+                                        : 'https://picsum.photos/200',
                                     imageBuilder: (context, imageProvider) =>
                                         Container(
                                       width: 110.0,
@@ -144,15 +176,15 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                                   fontFamily: "SFPRO regular",
                                   color: Colors.white),
                             )),
-                            Container(
-                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                child: const Text(
-                                  "Photographer & Youtuber",
-                                  style: TextStyle(
-                                      fontSize: 23,
-                                      fontFamily: "SFPRO regular",
-                                      color: Colors.white),
-                                )),
+                            // Container(
+                            //     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            //     child: const Text(
+                            //       "Photographer & Youtuber",
+                            //       style: TextStyle(
+                            //           fontSize: 23,
+                            //           fontFamily: "SFPRO regular",
+                            //           color: Colors.white),
+                            //     )),
                             Container(
                               margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                               child: Row(
@@ -168,7 +200,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                                       margin:
                                           EdgeInsets.fromLTRB(10, 10, 10, 10),
                                       child: Text(
-                                        "Level - ${snapshot.data['level']}",
+                                        "Level - ${level}",
                                         style: TextStyle(
                                             fontSize: 23,
                                             fontFamily: "SFPRO regular",
@@ -209,7 +241,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "9000",
+                                "${post}",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -224,7 +256,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "30",
+                                "${Point}",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -239,7 +271,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "25",
+                                "${followers}",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -254,7 +286,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "60",
+                                "${followings}",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -280,12 +312,12 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                       height: height * 0.32,
                       child: TabBarView(
                           controller: _controller,
-                          children: const <Widget>[
+                          children: <Widget>[
                             Posts(),
                             // Liv_contest(),
                             Points(),
                             Followers(),
-                            Followings(),
+                            Followings(notifyParent: refresh),
                           ]),
                     ),
                   ],

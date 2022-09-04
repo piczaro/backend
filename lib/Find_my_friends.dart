@@ -10,6 +10,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'mydrawer.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Find_my_friends extends StatefulWidget {
   const Find_my_friends({
     Key? key,
@@ -28,7 +30,7 @@ class _Find_my_friends extends State<Find_my_friends> {
       isLoading = true;
     });
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/find_my_users?name=${name}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/find_my_users?name=${name}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -176,8 +178,11 @@ class _Find_my_friends extends State<Find_my_friends> {
                                 color: Color(0xffffa300),
                                 shadowColor: Color(0xffffa300),
                                 child: IconButton(
-                                  onPressed: () =>
-                                      searchFriends(myController.text),
+                                  onPressed: () =>{
+                                     FocusScope.of(context).unfocus(),
+                                     searchFriends(myController.text),
+                                  },
+                                      
                                   icon: Icon(Icons.search, color: Colors.white),
                                 )),
                             border: OutlineInputBorder(
@@ -201,8 +206,9 @@ class _Find_my_friends extends State<Find_my_friends> {
                         ),
                       ),
                     ),
-                    _foundUsers.isNotEmpty
-                        ? ListView.builder(
+                   
+                     _foundUsers.isNotEmpty
+                        ?  ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: _foundUsers.length,
@@ -301,13 +307,20 @@ class _Find_my_friends extends State<Find_my_friends> {
                                   ],
                                 ),
                               );
+                             
                             })
-                        : Center(
-                            child: const Text(
-                              'No results found',
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
+                        : Column(
+                          children: [
+                             if(isLoading)Center(child: CircularProgressIndicator(),),
+                            if(!isLoading)Center(
+                                child: const Text(
+                                  'No results found',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                              ),
+                          ],
+                        ),
+                        
                   ]))),
       drawer: DrawerWidget(),
     );

@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:localstorage/localstorage.dart';
 import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -29,7 +30,30 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   AccessToken? _accessToken;
   bool _checking = true;
   Map jsonMap_body = new Map<String, dynamic>();
+
+  // String? token;
+
   final storage = new LocalStorage('my_data');
+  @override
+  void initState() {
+    super.initState();
+    checkPreviousSessionAndRedirect();
+  }
+
+  void checkPreviousSessionAndRedirect() async {
+    final token = await storage.getItem("jwt_token");
+    print(token);
+    if (token != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Dashboard(
+                  index: 0,
+                  profileindex: 0,
+                )),
+      );
+    }
+  }
 
   Future<http.Response?> createAlbum(String logintype) async {
     Map<String, dynamic> jsonMap_body = {
@@ -41,7 +65,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         isLoading = true;
       });
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/login'),
+        Uri.parse('${dotenv.env['API_URL']}/api/login'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json'
@@ -50,8 +74,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       );
       if (response.statusCode == 200) {
         var post = jsonDecode(response.body);
-        print(post["token"]);
-        if (post["token"] != '') {
+        print(post);
+        if (post["token"] != null) {
           await storage.setItem('jwt_token', post['token']);
           await storage.setItem('user_id', post['data']['id']);
           await storage.setItem('username', post['data']['username']);
@@ -62,17 +86,34 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             setState(() {
               isLoading = false;
             });
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                   builder: (context) => const Dashboard(
                         index: 0,
                         profileindex: 0,
-                      )),
+                      ),
+                     
+              ),
+              (Route<dynamic> route) => false
             );
           });
-        } else if (post["data"] != '') {}
+        } else if (post["data"] == null || post["token"] == null) {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(
+              msg: "Invalid login details",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.yellow);
+        }
       } else if (response.statusCode == 401) {
+        setState(() {
+          isLoading = false;
+        });
         Fluttertoast.showToast(
             msg: "Invalid login details",
             toastLength: Toast.LENGTH_SHORT,
@@ -117,7 +158,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         isLoading = true;
       });
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/login'),
+        Uri.parse('${dotenv.env['API_URL']}/api/login'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json'

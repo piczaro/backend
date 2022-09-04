@@ -22,7 +22,7 @@ import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Posts extends StatefulWidget {
   const Posts({Key? key}) : super(key: key);
 
@@ -38,7 +38,7 @@ class _Posts extends State<Posts> {
     final user_id = await storage.getItem('user_id');
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8000/api/participant_image_details/${user_id}'),
+          '${dotenv.env['API_URL']}/api/participant_image_details/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -118,7 +118,7 @@ class _Posts extends State<Posts> {
                         // height: 200,
                         child: CachedNetworkImage(
                           imageUrl:
-                              'http://10.0.2.2:8000/participant_images/${snapshot.data[index]['image_path']}',
+                              '${dotenv.env['API_URL']}/participant_images/${snapshot.data[index]['image_path']}',
                           placeholder: (context, url) =>
                               new Center(child: CircularProgressIndicator()),
                           errorWidget: (context, url, error) =>

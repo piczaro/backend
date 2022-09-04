@@ -8,6 +8,7 @@ import 'Contest.dart';
 import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'Login.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Terms_condition extends StatefulWidget {
   const Terms_condition({
     Key? key,
@@ -41,7 +42,7 @@ class _Terms_condition extends State<Terms_condition> {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/cms_details/terms'),
+      Uri.parse('${dotenv.env['API_URL']}/api/cms_details/terms'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',

@@ -18,7 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'Contested.dart';
 import 'package:localstorage/localstorage.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Globe_contest_all extends StatefulWidget {
   const Globe_contest_all({Key? key}) : super(key: key);
 
@@ -38,7 +38,7 @@ class _Globe_contest_all extends State<Globe_contest_all> {
     final storage = new LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/contest_listing'),
+      Uri.parse('${dotenv.env['API_URL']}/api/contest_listing'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',

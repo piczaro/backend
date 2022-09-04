@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Comments extends StatefulWidget {
   final int id;
 
@@ -47,7 +47,7 @@ class _Comments extends State<Comments> {
         isLoading = true;
       });
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/participant_comments/${widget.id}'),
+        Uri.parse('${dotenv.env['API_URL']}/api/participant_comments/${widget.id}'),
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
@@ -102,7 +102,7 @@ class _Comments extends State<Comments> {
 
     final response = await http.get(
       Uri.parse(
-          'http://10.0.2.2:8000/api/get_participant_comments/${widget.id}'),
+          '${dotenv.env['API_URL']}/api/get_participant_comments/${widget.id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',

@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'mydrawer.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Mybalance extends StatefulWidget {
   const Mybalance({
     Key? key,
@@ -80,7 +81,7 @@ class _Mybalance extends State<Mybalance> {
       isLoading = true;
     });
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/post_balance/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/post_balance/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -133,7 +134,7 @@ class _Mybalance extends State<Mybalance> {
     final token = await storage.getItem('jwt_token');
     final user_id = await storage.getItem('user_id');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/check_balance/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/check_balance/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',

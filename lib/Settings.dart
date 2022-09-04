@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
 import 'Changepassword.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Settings extends StatefulWidget {
   const Settings({
     Key? key,
@@ -17,19 +19,20 @@ class Settings extends StatefulWidget {
 
 class _Settings extends State<Settings> {
   int counter = 2;
+  bool loading = true;
   String _title = "Settings";
   final storage = new LocalStorage('my_data');
   String useremail = "";
   String gender = "Gender";
   String dropdownvalue = '';
   String name = "";
-  String  user_type= "";
+  String user_type = "";
   Future<Map<String, dynamic>> loaddata() async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final user_id = await storage.getItem('user_id');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/user_details/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/user_details/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -38,6 +41,7 @@ class _Settings extends State<Settings> {
       },
     );
     if (response.statusCode == 200) {
+      
       var jsonData = jsonDecode(response.body)['data'];
       print(jsonData);
       if (jsonData != null) {
@@ -49,6 +53,9 @@ class _Settings extends State<Settings> {
         });
       }
     } else {}
+    setState(() {
+        loading = false;
+      });
     return jsonDecode(response.body)['data'];
   }
 
@@ -136,175 +143,188 @@ class _Settings extends State<Settings> {
             backgroundColor: const Color(0xff1042aa),
           ),
         ),
-        body: Container(
-          margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text(
-                    "Name",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(
-                    name,
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 107, 106, 106),
-                        fontSize: 16,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text(
-                    "Email",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(
-                    useremail,
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 107, 106, 106),
-                        fontSize: 16,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                // Container(
-                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                //   child: const Text("Date of Birth",style:
-                //     TextStyle(
-                //       color: Colors.black,
-                //       fontSize: 18,
-                //       fontFamily: "SFPRO regular"
-                //     ),
-                //   ),
-                // ),
-                // Container(
-                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                //   child: const Text("10-02-2022",style :
-                //      TextStyle(
-                //       color: Color.fromARGB(255, 107, 106, 106),
-                //       fontSize: 16,
-                //       fontFamily: "SFPRO regular"
-                //     ),
-                //   ),
-                // ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: Text(
-                    gender,
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child:  Text(
-                    dropdownvalue,
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 107, 106, 106),
-                        fontSize: 16,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                // Container(
-                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                //   child: const Text("Pancard",style:
-                //     TextStyle(
-                //       color: Colors.black,
-                //       fontSize: 18,
-                //       fontFamily: "SFPRO regular"
-                //     ),
-                //   ),
-                // ),
-                // Container(
-                //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                //   child: const Text("ASFH10234",style :
-                //      TextStyle(
-                //       color: Color.fromARGB(255, 107, 106, 106),
-                //       fontSize: 16,
-                //       fontFamily: "SFPRO regular"
-                //     ),
-                //   ),
-                // ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  child: const Text(
-                    "Password",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"),
-                  ),
-                ),
-                if(user_type == "normal") Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Changepassword()),
-                        );
-                        },
+        body: Column(
+          children: [
+            if (loading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+            if (!loading)
+              Container(
+                margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
                         child: const Text(
-                          "change password",
+                          "Name",
                           style: TextStyle(
-                            color: Color.fromARGB(255, 10, 109, 201),
-                            fontSize: 16,
-                            fontFamily: "SFPRO regular",
-                            decoration: TextDecoration.underline,
-                          ),
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                if(user_type == "normal")Container(
-                  width: width * 0.90,
-                  height: height * 0.07,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Settings_edit()),
-                        );
-                      },
-                      child: const Text(
-                        "Edit",
-                        style: TextStyle(
-                          fontSize: 20,
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: Text(
+                          name,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 107, 106, 106),
+                              fontSize: 16,
+                              fontFamily: "SFPRO regular"),
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0xffffa300),
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(8.0),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: const Text(
+                          "Email",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
                         ),
-                      )),
-                ),
-              ]),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: Text(
+                          useremail,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 107, 106, 106),
+                              fontSize: 16,
+                              fontFamily: "SFPRO regular"),
+                        ),
+                      ),
+                      // Container(
+                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text("Date of Birth",style:
+                      //     TextStyle(
+                      //       color: Colors.black,
+                      //       fontSize: 18,
+                      //       fontFamily: "SFPRO regular"
+                      //     ),
+                      //   ),
+                      // ),
+                      // Container(
+                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text("10-02-2022",style :
+                      //      TextStyle(
+                      //       color: Color.fromARGB(255, 107, 106, 106),
+                      //       fontSize: 16,
+                      //       fontFamily: "SFPRO regular"
+                      //     ),
+                      //   ),
+                      // ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: Text(
+                          gender,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: Text(
+                          dropdownvalue,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 107, 106, 106),
+                              fontSize: 16,
+                              fontFamily: "SFPRO regular"),
+                        ),
+                      ),
+                      // Container(
+                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text("Pancard",style:
+                      //     TextStyle(
+                      //       color: Colors.black,
+                      //       fontSize: 18,
+                      //       fontFamily: "SFPRO regular"
+                      //     ),
+                      //   ),
+                      // ),
+                      // Container(
+                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text("ASFH10234",style :
+                      //      TextStyle(
+                      //       color: Color.fromARGB(255, 107, 106, 106),
+                      //       fontSize: 16,
+                      //       fontFamily: "SFPRO regular"
+                      //     ),
+                      //   ),
+                      // ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: const Text(
+                          "Password",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
+                        ),
+                      ),
+                      if (user_type == "normal")
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Changepassword()),
+                                  );
+                                },
+                                child: const Text(
+                                  "change password",
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 10, 109, 201),
+                                    fontSize: 16,
+                                    fontFamily: "SFPRO regular",
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (user_type == "normal")
+                        Container(
+                          width: width * 0.90,
+                          height: height * 0.07,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const Settings_edit()),
+                                );
+                              },
+                              child: const Text(
+                                "Edit",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: Color(0xffffa300),
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              )),
+                        ),
+                    ]),
+              ),
+          ],
         ),
         drawer: DrawerWidget());
   }

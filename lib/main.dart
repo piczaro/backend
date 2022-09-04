@@ -4,15 +4,18 @@ import './Register.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:pixzaro/Dashboard.dart';
 import 'Dashboard.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 Future<void> main() async {
   final storage = new LocalStorage('my_data');
   // String? token;
   final token = await storage.getItem('jwt_token');
   print(token);
-
+  print("token");
+  await dotenv.load();
   runApp(MaterialApp(
     title: 'Flutter Demo',
-    home: token != null ? Dashboard(index: 0, profileindex: 0) : MyHomePage() ,
+    home: token != null ? Dashboard(index: 0, profileindex: 0) : MyHomePage(),
     // home:MyHomePage() ,
     debugShowCheckedModeBanner: false,
   ));
@@ -20,6 +23,18 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
+  void checkPreviousSessionAndRedirect() async {
+    final storage = new LocalStorage('my_data');
+    final token = await storage.getItem("jwt_token");
+    print(token);
+    if (token != null) {
+      MaterialPageRoute(
+          builder: (context) => const Dashboard(
+                index: 0,
+                profileindex: 0,
+              ));
+    }
+  }
 
   // This widget is the root of your application.
   @override

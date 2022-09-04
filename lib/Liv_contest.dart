@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 import 'Contest.dart';
 import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Liv_contest extends StatefulWidget {
   const Liv_contest({Key? key}) : super(key: key);
 
@@ -35,7 +35,7 @@ class _Liv_contest extends State<Liv_contest> {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/ongoing_contest'),
+      Uri.parse('${dotenv.env['API_URL']}/api/ongoing_contest'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',

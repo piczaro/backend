@@ -36,7 +36,11 @@ class _MYProfile extends State<MYProfile> with TickerProviderStateMixin {
   String _title = "Profile";
   int counter = 0;
   int activeindex = 1;
-
+   refresh() {
+    setState(() {
+     
+    });
+  }
   String counttime = "Loading";
   // Timer? countdownTimer;
   Duration myDuration = Duration(days: 5);
@@ -321,12 +325,12 @@ class _MYProfile extends State<MYProfile> with TickerProviderStateMixin {
                       height: height * 0.40,
                       child: TabBarView(
                           controller: _controller,
-                          children: const <Widget>[
+                          children: <Widget>[
                             Posts(),
                             // Liv_contest(),
                             Points(),
                             Followers(),
-                            Followings(),
+                            Followings(notifyParent: refresh()),
                           ]),
                     ),
                   ],

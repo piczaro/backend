@@ -2,511 +2,417 @@ import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
-class Help_support extends StatefulWidget {
-  
-  const Help_support({Key? key, }) : super(key: key);
-  
-  @override
-  
-   
+import 'dart:convert';
+import 'package:localstorage/localstorage.dart';
+import 'package:http/http.dart' as http;
+import 'Changepassword.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'mydrawer.dart';
+import 'dart:convert';
+import 'package:localstorage/localstorage.dart';
+import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io';
 
-  
+class Help_support extends StatefulWidget {
+  const Help_support({
+    Key? key,
+  }) : super(key: key);
+
+  @override
   State<Help_support> createState() => _Help_support();
 }
 
 class _Help_support extends State<Help_support> {
-   int counter = 2;
-   String _title =  "Help and Support";
-    final storage = new LocalStorage('my_data');
-    String useremail = "test@gmail.com";
-    String gender = "Male";
-     @override
+  bool isLoading = false;
+  int counter = 2;
+  String _title = "Help and Support";
+  final storage = new LocalStorage('my_data');
+  String useremail = "";
+  String gender = "Male";
+  @override
   void initState() {
-    setState(() {
-        // useremail  = storage.getItem('Usermail');
-        // gender  = storage.getItem('usergender');
-    });
+    loaddata();
   }
+
+  Future<Map<String, dynamic>> loaddata() async {
+    setState(() {
+      isLoading = true;
+    });
+    final storage = LocalStorage('my_data');
+    final token = await storage.getItem('jwt_token');
+    final user_id = await storage.getItem('user_id');
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/api/user_details/${user_id}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token}',
+        //'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNjYxMDY0MjkzLCJleHAiOjE2NjEwNjc4OTMsIm5iZiI6MTY2MTA2NDI5MywianRpIjoiNHZ3NXpoSWY4WEFuajJQZyIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.2uRgNx36JrNZzlezxQ7qfkqNsL8ydwxyZPCFUTgDsW',
+      },
+    );
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body)['data'];
+      print(jsonData);
+      if (jsonData != null) {
+        setState(() {
+          useremail = jsonData['email'];
+          dropdownvalue = jsonData['gender'];
+          //userName.text = jsonData['name'];
+        });
+      }
+    } else {}
+    setState(() {
+      isLoading = false;
+    });
+    return jsonDecode(response.body)['data'];
+  }
+
   String dropdownvalue = 'Item 1';
-    var items = [   
+  var items = [
     'Item 1',
     'Item 2',
     'Item 3',
     'Item 4',
     'Item 5',
   ];
-   Widget build(BuildContext context) {
-   
+  Future<http.Response?> createAlbum() async {
+    Map<String, dynamic> jsonMap_body = {
+      // "user_id": 16,
+      // "contest_id": contest_id,
+      // "file": file
+    };
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final storage = LocalStorage('my_data');
+      final token = await storage.getItem('jwt_token');
+      final user_id = await storage.getItem('user_id');
+      final response = http.MultipartRequest(
+        "POST",
+        Uri.parse('${dotenv.env['API_URL']}/api/create_support'),
+        // headers: {
+        //   'Content-type': 'application/json',
+        //   'Accept': 'application/json',
+        //   'Authorization': 'Bearer ${token}',
+        // },
+        // body: json.encode(jsonMap_body),
+      );
+
+      response.headers['Content-type'] = 'application/json';
+      response.headers['Accept'] = 'application/json';
+      response.headers['Authorization'] = 'Bearer ${token}';
+      response.fields['user_id'] = user_id.toString();
+      response.fields['description'] = desCription.text;
+      if (file != null) {
+        response.files
+            .add(await http.MultipartFile.fromPath("file", file!.path));
+      }
+
+      var res = await response.send();
+      // print(res.body);
+      var streaMresponse = await http.Response.fromStream(res);
+      print(streaMresponse.body);
+      if (streaMresponse.statusCode == 200) {
+        setState(() {
+          isLoading = false;
+        });
+        var post = jsonDecode(streaMresponse.body);
+        Fluttertoast.showToast(
+            msg: post['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromARGB(255, 33, 190, 59),
+            textColor: Color.fromARGB(255, 255, 255, 255));
+      } else if (streaMresponse.statusCode == 401) {
+        Fluttertoast.showToast(
+            msg: "Invalid login details",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.yellow);
+      } else if (streaMresponse.statusCode == 400) {
+        // print(res);
+      } else {
+        print(streaMresponse);
+      }
+    } on SocketException catch (_) {
+      Fluttertoast.showToast(
+          msg: 'Please check your internet connection',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.red,
+          textColor: Colors.yellow);
+    }
+  }
+
+  File? file;
+  final formGlobalKey = GlobalKey<FormState>();
+  TextEditingController desCription = TextEditingController();
+  TextEditingController userEmail = TextEditingController();
+  TextEditingController Subject = TextEditingController();
+  Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-      double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery.of(context).size.height;
     String strDigits(int n) => n.toString().padLeft(2, '0');
-    
+
     return Scaffold(
-       appBar: PreferredSize(
-            preferredSize:  Size.fromHeight(height * 0.10),
-            child: AppBar(
-              // leading: Column(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     IconButton(
-              //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-              //       onPressed: () => Navigator.of(context).pop(),
-              //     ),
-              //   ],
-              // ), 
-              title: Container(
-                margin: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(_title,style: TextStyle(
-                          fontSize: 20,
-                        ),
-                    ),
-                    
-                  ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(height * 0.10),
+        child: AppBar(
+          // leading: Column(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   children: [
+          //     IconButton(
+          //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+          //       onPressed: () => Navigator.of(context).pop(),
+          //     ),
+          //   ],
+          // ),
+          title: Container(
+            margin: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  _title,
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
-              ),
-              actions: <Widget>[
-          // Using Stack to show Notification Badge
-           Column(
-             mainAxisAlignment: MainAxisAlignment.end,
-             children: [
-               Container(
-                 margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                 child: Stack(
-                  children: <Widget>[
-                     IconButton(icon: Icon(Icons.notifications,size: 30,), onPressed: () {
-                      setState(() {
-                        counter = 0;
-                      });
-                    }),
-                     Positioned(
-                      right: 11,
-                      top: 11,
-                      child:  Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration:  BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  ],
-          ),
-               ),
-             ],
-           ),
-        ],
-              centerTitle: true,
-              toolbarHeight:100,
-              backgroundColor: const Color(0xff1042aa), 
+              ],
             ),
+          ),
+          actions: <Widget>[
+            // Using Stack to show Notification Badge
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  child: Stack(
+                    children: <Widget>[
+                      IconButton(
+                          icon: Icon(
+                            Icons.notifications,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              counter = 0;
+                            });
+                          }),
+                      Positioned(
+                        right: 11,
+                        top: 11,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+          centerTitle: true,
+          toolbarHeight: 100,
+          backgroundColor: const Color(0xff1042aa),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+          margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+          child: Form(
+            key: formGlobalKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment:MainAxisAlignment.start,
-              children : [
-                  Container(
-                     margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: const Text("Email",style: 
-                      TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (isLoading)
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  if (!isLoading)
+                    Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: const Text(
+                        "Email",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: "SFPRO regular"),
                       ),
+                    ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                    child: Text(useremail),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    child: const Text(
+                      "Subject",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular"),
                     ),
                   ),
                   Container(
-                     margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                    child:     const TextField (  
-                      decoration: InputDecoration(  
-                        hintText: 'Enter Your email'  
-                      ),  
-                    ),  
-                  ),
-                  Container(
-                     margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: const Text("Subject",style: 
-                      TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width:  width * 0.90,
-                     margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                   child: DropdownButton(
-          
-          
-                        isExpanded: true,
-                        // Initial Value
-                        value: dropdownvalue,
-                        
-                        // Down Arrow Icon
-                        icon: const Icon(Icons.keyboard_arrow_down),   
-                        
-                        // Array list of items
-                        items: items.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(items),
-                          );
-                        }).toList(),
-                        // After selecting the desired option,it will
-                        // change button value to selected value
-                        onChanged: (String? newValue) {
+                    margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                    child: TextFormField(
+                      controller: Subject,
+                      decoration:
+                          InputDecoration(hintText: 'Enter Your Subject'),
+                      validator: (val) {
+                        if (val != '') {
                           setState(() {
-                            dropdownvalue = newValue!;
+                            // password = val!;
                           });
+                        }
+
+                        return val!.isEmpty ? 'Please enter a Subject' : null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Text(
+                      "Description",
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontFamily: "SFPRO regular"),
+                    ),
+                  ),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: TextFormField(
+                        controller: desCription,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        minLines: 5,
+                        validator: (val) {
+                          if (val != '') {
+                            setState(() {
+                              // password = val!;
+                            });
+                          }
+
+                          return val!.isEmpty
+                              ? 'Please enter a description'
+                              : null;
                         },
-                        hint: Container(
-                        width: 150,                      //and here
-                        child: Text(
-                          "Select Item Type",
-                          style: TextStyle(color: Colors.grey),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
-                     
-                    ),
-                      
-                  ),
+                      )),
                   Container(
-                     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Text("Description",style: 
-                      const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular"
-                      ),
-                    ),
-                  ),
-                  Container(
-                     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: const TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      minLines: 5
-                    )
-                  ),
-                  Container(
-                     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                     width: width * 0.90,
-                    child : ElevatedButton(
-                      onPressed: () async{
-                         final result = await FilePicker.platform.pickFiles();
-                
-                          if(result == null) return;
-                          final file = result.files.first;
-                          if(file != null){
-                              // Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(builder: (context) => const Contested() )
-                              // );
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          final result = await FilePicker.platform.pickFiles();
+
+                          if (result == null) return;
+                          var file = result.files.first;
+                          if (file != null) {
+                            setState(() {
+                              file = file;
+                            });
+                            // Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(builder: (context) => const Contested() )
+                            // );
                           }
                           print('${file.name}');
-                      },
-                      child: const Padding(
-                         padding: const EdgeInsets.only(left: 8),
-                        child: Text("Upload attachment",style: TextStyle(
-                           fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                           color: Colors.black,
-                        ),),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 255, 255, 255),
-                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius:  BorderRadius.circular(5.0),
-                        )
-                      )
-                    ),
-                  ),
-                   Container(
-                    width: width * 0.90,
-                     height: height * 0.07,
-                     child: ElevatedButton(
-                        
-                         onPressed: (){
-                          //  Navigator.push(
-                          //               context,
-                          //               MaterialPageRoute(builder: (context) =>  const Settings_edit()),
-                          // );
-                        }, 
-                        child: const Text("Submit",style: TextStyle(
-                          fontSize: 20,
-                        ),),
-                         style: ElevatedButton.styleFrom(
-                            primary:  Color(0xffffa300),
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        },
+                        child: const Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            "Upload attachment",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular",
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            primary: Color.fromARGB(255, 255, 255, 255),
+                            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                             shape: RoundedRectangleBorder(
-                              side: const BorderSide(color: Colors.white),
-                              borderRadius:  BorderRadius.circular(8.0),
-                           ),
-                           
-                         )
-                        ),
-                   ),
-              ]
-            ),
-        ),
-      ),
-      drawer: Drawer(  
-        child: Container(
-          padding: EdgeInsets.fromLTRB(30, 10, 10, 10),
-          color: Color(0xff1042aa),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.money,color: Colors.white,),
-                    Text(' My Balance',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.share_rounded,color: Colors.white,),
-                    Text(' Refer & Earn',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.grade_outlined,color: Colors.white,),
-                    Text(' My Level',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.gps_fixed,color: Colors.white,),
-                    Text(' Find my Friends',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              InkWell(
-                onTap: (){
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) =>  const Settings()),
-                    // );
-                },
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child : 
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: const[
-                      
-                      Icon(Icons.settings,color: Colors.white,),
-                      Text(' My Settings',style: TextStyle(
-                        color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular",
-                        ),
-                      ),
-                    ],
-                  )
-                ),
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.help_center,color: Colors.white,),
-                    Text(' Help Desk',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.account_box_outlined,color: Colors.white,),
-                    Text(' About App',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.money_outlined,color: Colors.white,),
-                    Text(' Terms & condition',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child : 
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const[
-                    
-                    Icon(Icons.logout_outlined,color: Colors.white,),
-                    Text(' Logout',style: TextStyle(
-                      color: Colors.white,
-                        fontSize: 18,
-                        fontFamily: "SFPRO regular",
-                      ),
-                    ),
-                  ],
-                )
-              ),
-              Container(
-                margin:EdgeInsets.fromLTRB(0, 5, 10, 5),
-                child: Divider(
-                  
-                  color: Colors.grey
-                ),
-              ),
-            ]
+                              borderRadius: BorderRadius.circular(5.0),
+                            ))),
+                  ),
+                  Container(
+                    width: width * 0.90,
+                    height: height * 0.07,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          if (formGlobalKey.currentState!.validate()) {
+                            FocusScope.of(context).unfocus();
+                            createAlbum();
+                          }
+                        },
+                        child: isLoading
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                // as elevated button gets clicked we will see text"Loading..."
+                                // on the screen with circular progress indicator white in color.
+                                //as loading gets stopped "Submit" will be displayed
+                                children: const [
+                                  Text(
+                                    'Loading...',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              )
+                            : const Text(
+                                "Submit",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xffffa300),
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        )),
+                  ),
+                ]),
           ),
         ),
-      ), 
+      ),
+      drawer: Drawer(child: DrawerWidget()),
     );
-   }
+  }
 }

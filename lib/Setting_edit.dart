@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Settings_edit extends StatefulWidget {
   const Settings_edit({
     Key? key,
@@ -17,6 +17,7 @@ class Settings_edit extends StatefulWidget {
 class _Settings_edit extends State<Settings_edit> {
   String _title = "Settings";
   int counter = 2;
+   bool loading = true;
   // String useremail = "testmail@gmail.com";
   String gender = "Male";
   String dropdownvalue = 'Male';
@@ -26,7 +27,7 @@ class _Settings_edit extends State<Settings_edit> {
     final token = await storage.getItem('jwt_token');
     final user_id = await storage.getItem('user_id');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/user_details/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/user_details/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -45,6 +46,9 @@ class _Settings_edit extends State<Settings_edit> {
         });
       }
     } else {}
+    setState(() {
+      loading = false;
+    });
     return jsonDecode(response.body)['data'];
   }
 
@@ -76,7 +80,7 @@ class _Settings_edit extends State<Settings_edit> {
       isLoading = true;
     });
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/user_update/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/user_update/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -202,254 +206,259 @@ class _Settings_edit extends State<Settings_edit> {
           ),
         ),
         body: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: const Text(
-                      "Name",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular"),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: TextFormField(
-                      controller: userName,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 18,
-                          fontFamily: 'SFPRO regular'),
-                      decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xff979197), width: 1.5),
-                        ),
-                        hintText: 'Name',
-                        hintStyle: TextStyle(
-                            fontSize: 16.0,
-                            fontFamily: 'SFPRO reqular',
-                            color: Color.fromARGB(255, 0, 0, 0)),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.only(
-                              top: 0), // add padding to adjust icon
-                          child: Icon(
-                            IconData(
-                              0xe3c3,
-                              fontFamily: 'MaterialIcons',
-                            ),
-                            color: Color.fromARGB(255, 0, 0, 0),
-                          ),
+          child: Column(
+            children: [
+              if(loading)Center(child: CircularProgressIndicator(),),
+              if(!loading)Container(
+                margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: const Text(
+                          "Name",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
                         ),
                       ),
-                      validator: (val) {
-                        if (val != '') {
-                          setState(() {
-                            // password = val!;
-                          });
-                        }
-
-                        return val!.isEmpty ? 'please enter a password' : null;
-                      },
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: const Text(
-                      "Email",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular"),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: TextFormField(
-                      controller: userEmail,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 18,
-                          fontFamily: 'SFPRO regular'),
-                      decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color(0xff979197), width: 1.5),
-                        ),
-                        hintText: 'Password',
-                        hintStyle: TextStyle(
-                            fontSize: 16.0,
-                            fontFamily: 'SFPRO reqular',
-                            color: Colors.white),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.only(
-                              top: 0), // add padding to adjust icon
-                          child: Icon(
-                            IconData(
-                              0xe3c3,
-                              fontFamily: 'MaterialIcons',
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: TextFormField(
+                          controller: userName,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 18,
+                              fontFamily: 'SFPRO regular'),
+                          decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Color(0xff979197), width: 1.5),
                             ),
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            hintText: 'Name',
+                            hintStyle: TextStyle(
+                                fontSize: 16.0,
+                                fontFamily: 'SFPRO reqular',
+                                color: Color.fromARGB(255, 0, 0, 0)),
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 0), // add padding to adjust icon
+                              child: Icon(
+                                IconData(
+                                  0xe3c3,
+                                  fontFamily: 'MaterialIcons',
+                                ),
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
                           ),
+                          validator: (val) {
+                            if (val != '') {
+                              setState(() {
+                                // password = val!;
+                              });
+                            }
+
+                            return val!.isEmpty ? 'please enter a password' : null;
+                          },
                         ),
                       ),
-                      validator: (val) {
-                        if (val != '') {
-                          setState(() {
-                            // password = val!;
-                          });
-                        }
-
-                        return val!.isEmpty ? 'please enter a password' : null;
-                      },
-                    ),
-                  ),
-                  // Container(
-                  //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  //   child: const Text(
-                  //     "Date of Birth",
-                  //     style: TextStyle(
-                  //         color: Colors.black,
-                  //         fontSize: 18,
-                  //         fontFamily: "SFPRO regular"),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  //   child: const Text(
-                  //     "10-02-2022",
-                  //     style: TextStyle(
-                  //         color: Color.fromARGB(255, 107, 106, 106),
-                  //         fontSize: 16,
-                  //         fontFamily: "SFPRO regular"),
-                  //   ),
-                  // ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    child: Text(
-                      "Gender",
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontFamily: "SFPRO regular"),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                    width: width,
-                    child: DropdownButton(
-                      // Initial Value
-                      value: dropdownvalue,
-                      alignment: Alignment.center,
-                      // Down Arrow Icon
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      onChanged: (val) {
-                        setState(() {
-                          dropdownvalue = val.toString();
-                        });
-                      },
-                      // Array list of items
-                      items: items.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: SizedBox(
-                            width: width * 0.73,
-                            child: Text(
-                              items,
-                              textAlign: TextAlign.center,
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: const Text(
+                          "Email",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: TextFormField(
+                          controller: userEmail,
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 18,
+                              fontFamily: 'SFPRO regular'),
+                          decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Color(0xff979197), width: 1.5),
+                            ),
+                            hintText: 'Password',
+                            hintStyle: TextStyle(
+                                fontSize: 16.0,
+                                fontFamily: 'SFPRO reqular',
+                                color: Colors.white),
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 0), // add padding to adjust icon
+                              child: Icon(
+                                IconData(
+                                  0xe3c3,
+                                  fontFamily: 'MaterialIcons',
+                                ),
+                                color: Color.fromARGB(255, 0, 0, 0),
+                              ),
                             ),
                           ),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      // onChanged: (String? newValue) {
-                      //   setState(() {
-                      //     dropdownvalue = newValue!;
-                      //   });
-                      // },
-                    ),
-                  ),
-                  // Container(
-                  //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  //   child: const Text(
-                  //     "Male",
-                  //     style: TextStyle(
-                  //         color: Color.fromARGB(255, 107, 106, 106),
-                  //         fontSize: 16,
-                  //         fontFamily: "SFPRO regular"),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  //   child: const Text(
-                  //     "Pancard",
-                  //     style: TextStyle(
-                  //         color: Colors.black,
-                  //         fontSize: 18,
-                  //         fontFamily: "SFPRO regular"),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                  //   child: const Text(
-                  //     "ASFH10234",
-                  //     style: TextStyle(
-                  //         color: Color.fromARGB(255, 107, 106, 106),
-                  //         fontSize: 16,
-                  //         fontFamily: "SFPRO regular"),
-                  //   ),
-                  // ),
-                  Container(
-                    width: width * 0.90,
-                    height: height * 0.07,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          createAlbum();
-                        },
-                        child: isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                          validator: (val) {
+                            if (val != '') {
+                              setState(() {
+                                // password = val!;
+                              });
+                            }
 
-                                // as elevated button gets clicked we will see text"Loading..."
-                                // on the screen with circular progress indicator white in color.
-                                //as loading gets stopped "Submit" will be displayed
-                                children: const [
-                                  Text(
-                                    'Loading...',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              )
-                            : const Text(
-                                "Save",
-                                style: TextStyle(
-                                  fontSize: 20,
+                            return val!.isEmpty ? 'please enter a password' : null;
+                          },
+                        ),
+                      ),
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text(
+                      //     "Date of Birth",
+                      //     style: TextStyle(
+                      //         color: Colors.black,
+                      //         fontSize: 18,
+                      //         fontFamily: "SFPRO regular"),
+                      //   ),
+                      // ),
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text(
+                      //     "10-02-2022",
+                      //     style: TextStyle(
+                      //         color: Color.fromARGB(255, 107, 106, 106),
+                      //         fontSize: 16,
+                      //         fontFamily: "SFPRO regular"),
+                      //   ),
+                      // ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        child: Text(
+                          "Gender",
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: "SFPRO regular"),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                        width: width,
+                        child: DropdownButton(
+                          // Initial Value
+                          value: dropdownvalue,
+                          alignment: Alignment.center,
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+                          onChanged: (val) {
+                            setState(() {
+                              dropdownvalue = val.toString();
+                            });
+                          },
+                          // Array list of items
+                          items: items.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: SizedBox(
+                                width: width * 0.73,
+                                child: Text(
+                                  items,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Color(0xffffa300),
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        )),
-                  ),
-                ]),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          // onChanged: (String? newValue) {
+                          //   setState(() {
+                          //     dropdownvalue = newValue!;
+                          //   });
+                          // },
+                        ),
+                      ),
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text(
+                      //     "Male",
+                      //     style: TextStyle(
+                      //         color: Color.fromARGB(255, 107, 106, 106),
+                      //         fontSize: 16,
+                      //         fontFamily: "SFPRO regular"),
+                      //   ),
+                      // ),
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text(
+                      //     "Pancard",
+                      //     style: TextStyle(
+                      //         color: Colors.black,
+                      //         fontSize: 18,
+                      //         fontFamily: "SFPRO regular"),
+                      //   ),
+                      // ),
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      //   child: const Text(
+                      //     "ASFH10234",
+                      //     style: TextStyle(
+                      //         color: Color.fromARGB(255, 107, 106, 106),
+                      //         fontSize: 16,
+                      //         fontFamily: "SFPRO regular"),
+                      //   ),
+                      // ),
+                      Container(
+                        width: width * 0.90,
+                        height: height * 0.07,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              createAlbum();
+                            },
+                            child: isLoading
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+
+                                    // as elevated button gets clicked we will see text"Loading..."
+                                    // on the screen with circular progress indicator white in color.
+                                    //as loading gets stopped "Submit" will be displayed
+                                    children: const [
+                                      Text(
+                                        'Loading...',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  )
+                                : const Text(
+                                    "Save",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xffffa300),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            )),
+                      ),
+                    ]),
+              ),
+            ],
           ),
         ),
         drawer: DrawerWidget());

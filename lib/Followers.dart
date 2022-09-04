@@ -23,7 +23,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Followers extends StatefulWidget {
   const Followers({Key? key}) : super(key: key);
 
@@ -39,7 +39,7 @@ class _Followers extends State<Followers> {
     final username = await storage.getItem('username');
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/get_follow_users/${user_id}'),
+      Uri.parse('${dotenv.env['API_URL']}/api/get_follow_users/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -236,90 +236,90 @@ class _Followers extends State<Followers> {
                       });
                 }
               }),
-          Container(
-              child: Text(
-            "Suggestions for you",
-            style: TextStyle(fontSize: 20, fontFamily: "SFPRO BOLD"),
-          )),
-          Container(
-            margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                new BoxShadow(
-                  color: Color.fromARGB(255, 218, 217, 217),
-                  blurRadius: 20.0,
-                ),
-              ],
-            ),
-            child: Container(
-              width: width * 0.90,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                      child: CircleAvatar(
-                        radius: 30.0,
-                        backgroundImage:
-                            NetworkImage('https://via.placeholder.com/120'),
-                        backgroundColor: Colors.transparent,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            "Saranya",
-                            style: TextStyle(
-                                fontSize: 15, fontFamily: "SFPRO semibold"),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(10, 5, 0, 0),
-                        child: Text(
-                          "Saranya",
-                          style: TextStyle(
-                              fontSize: 13, fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(60, 15, 0, 10),
-                    width: width * 0.25,
-                    height: height * 0.05,
-                    child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Follow",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: const Color(0xffffa300),
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                        )),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //     child: Text(
+          //   "Suggestions for you",
+          //   style: TextStyle(fontSize: 20, fontFamily: "SFPRO BOLD"),
+          // )),
+          // Container(
+          //   margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     boxShadow: [
+          //       new BoxShadow(
+          //         color: Color.fromARGB(255, 218, 217, 217),
+          //         blurRadius: 20.0,
+          //       ),
+          //     ],
+          //   ),
+          //   child: Container(
+          //     width: width * 0.90,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.start,
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         GestureDetector(
+          //           onTap: () {},
+          //           child: Container(
+          //             margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+          //             child: CircleAvatar(
+          //               radius: 30.0,
+          //               backgroundImage:
+          //                   NetworkImage('https://via.placeholder.com/120'),
+          //               backgroundColor: Colors.transparent,
+          //             ),
+          //           ),
+          //         ),
+          //         Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: [
+          //             Container(
+          //               margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          //               child: GestureDetector(
+          //                 onTap: () {},
+          //                 child: Text(
+          //                   "Saranya",
+          //                   style: TextStyle(
+          //                       fontSize: 15, fontFamily: "SFPRO semibold"),
+          //                 ),
+          //               ),
+          //             ),
+          //             Container(
+          //               margin: EdgeInsets.fromLTRB(10, 5, 0, 0),
+          //               child: Text(
+          //                 "Saranya",
+          //                 style: TextStyle(
+          //                     fontSize: 13, fontFamily: "SFPRO regular"),
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //         Container(
+          //           margin: const EdgeInsets.fromLTRB(60, 15, 0, 10),
+          //           width: width * 0.25,
+          //           height: height * 0.05,
+          //           child: ElevatedButton(
+          //               onPressed: () {},
+          //               child: const Text(
+          //                 "Follow",
+          //                 style: TextStyle(
+          //                     fontSize: 20,
+          //                     color: Colors.white,
+          //                     fontFamily: "SFPRO regular"),
+          //               ),
+          //               style: ElevatedButton.styleFrom(
+          //                 primary: const Color(0xffffa300),
+          //                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+          //                 shape: RoundedRectangleBorder(
+          //                   borderRadius: BorderRadius.circular(5.0),
+          //                 ),
+          //               )),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

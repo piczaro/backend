@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -76,7 +76,7 @@ class _RegisterPageState extends State<Registerpage>
    bool isLoading = false;
   Future<http.Response?> createAlbum(String logintype) async {
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/register'),
+      Uri.parse('${dotenv.env['API_URL']}/api/register'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json'
@@ -160,12 +160,10 @@ class _RegisterPageState extends State<Registerpage>
           textColor: Colors.yellow);
     } else {
       storage.setItem('register_type', 'facebook');
-      Fluttertoast.showToast(
-          msg: 'Facebook signin Successfull',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Color.fromARGB(255, 24, 133, 14),
-          textColor: Color.fromARGB(255, 255, 255, 255));
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Register_setup()),
+        );
     }
     print(result);
   }

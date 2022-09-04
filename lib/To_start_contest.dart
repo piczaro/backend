@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:like_button/like_button.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:io';
 import 'package:flutter/widgets.dart';
@@ -32,7 +32,7 @@ class _To_start_contest extends State<To_start_contest> {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/upcoming_contest'),
+      Uri.parse('${dotenv.env['API_URL']}/api/upcoming_contest'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
