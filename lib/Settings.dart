@@ -7,7 +7,7 @@ import 'package:localstorage/localstorage.dart';
 import 'package:http/http.dart' as http;
 import 'Changepassword.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+import 'Appbar.dart';
 class Settings extends StatefulWidget {
   const Settings({
     Key? key,
@@ -74,74 +74,75 @@ class _Settings extends State<Settings> {
 
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(height * 0.10),
-          child: AppBar(
-            // leading: Column(
-            //   mainAxisAlignment: MainAxisAlignment.end,
-            //   children: [
-            //     IconButton(
-            //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-            //       onPressed: () => Navigator.of(context).pop(),
-            //     ),
-            //   ],
-            // ),
-            title: Center(
-              child: Text(
-                _title,
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            actions: <Widget>[
-              // Using Stack to show Notification Badge
-              Center(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                  child: Stack(
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(
-                            Icons.notifications,
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              counter = 0;
-                            });
-                          }),
-                      Positioned(
-                        right: 11,
-                        top: 11,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 18,
-                            minHeight: 18,
-                          ),
-                          child: const Text(
-                            '1',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            centerTitle: true,
-            toolbarHeight: 100,
-            backgroundColor: const Color(0xff1042aa),
-          ),
+          preferredSize: Size.fromHeight(height * 0.08),
+          child: CustomAppBar(title: _title),
+          // child: AppBar(
+          //   // leading: Column(
+          //   //   mainAxisAlignment: MainAxisAlignment.end,
+          //   //   children: [
+          //   //     IconButton(
+          //   //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+          //   //       onPressed: () => Navigator.of(context).pop(),
+          //   //     ),
+          //   //   ],
+          //   // ),
+          //   title: Center(
+          //     child: Text(
+          //       _title,
+          //       style: TextStyle(
+          //         fontSize: 20,
+          //       ),
+          //     ),
+          //   ),
+          //   actions: <Widget>[
+          //     // Using Stack to show Notification Badge
+          //     Center(
+          //       child: Container(
+          //         margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+          //         child: Stack(
+          //           children: <Widget>[
+          //             IconButton(
+          //                 icon: Icon(
+          //                   Icons.notifications,
+          //                   size: 30,
+          //                 ),
+          //                 onPressed: () {
+          //                   setState(() {
+          //                     counter = 0;
+          //                   });
+          //                 }),
+          //             Positioned(
+          //               right: 11,
+          //               top: 11,
+          //               child: Container(
+          //                 padding: const EdgeInsets.all(2),
+          //                 decoration: BoxDecoration(
+          //                   color: Colors.red,
+          //                   borderRadius: BorderRadius.circular(6),
+          //                 ),
+          //                 constraints: const BoxConstraints(
+          //                   minWidth: 18,
+          //                   minHeight: 18,
+          //                 ),
+          //                 child: const Text(
+          //                   '1',
+          //                   style: TextStyle(
+          //                     color: Colors.white,
+          //                     fontSize: 12,
+          //                   ),
+          //                   textAlign: TextAlign.center,
+          //                 ),
+          //               ),
+          //             )
+          //           ],
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          //   centerTitle: true,
+          //   toolbarHeight: 100,
+          //   backgroundColor: const Color(0xff1042aa),
+          // ),
         ),
         body: Column(
           children: [

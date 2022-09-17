@@ -98,7 +98,7 @@ class _Register_setup extends State<Register_setup> {
             isLoading = false;
           });
           Fluttertoast.showToast(
-              msg:  jsonDecode(response.body)['username'][0],
+              msg: jsonDecode(response.body)['username'][0],
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 1,
@@ -111,8 +111,7 @@ class _Register_setup extends State<Register_setup> {
             );
           });
         }
-      } 
-      else if (response.statusCode == 400){
+      } else if (response.statusCode == 400) {
         var post = jsonDecode(response.body);
         print(post);
         if (post['message'] == 'Email Already Exists') {
@@ -132,9 +131,8 @@ class _Register_setup extends State<Register_setup> {
               MaterialPageRoute(builder: (context) => const LoginPage()),
             );
           });
-        } 
-      }     
-      else {
+        }
+      } else {
         var post = jsonDecode(response.body);
         setState(() {
           isLoading = false;
@@ -154,7 +152,7 @@ class _Register_setup extends State<Register_setup> {
         });
       }
     } else if (register_type == 'facebook') {
-      final  result = await FacebookAuth.instance.login();
+      final result = await FacebookAuth.instance.login();
       print(result);
       // Map<String, dynamic> jsonMap_body = {
       //   "displayName":result.,
@@ -262,6 +260,9 @@ class _Register_setup extends State<Register_setup> {
         } else {
           post["error"].forEach((key, messages) {
             if ("email" == key) {
+              setState(() {
+                isLoading = false;
+              });
               // show email errors like this
               for (var message in messages) {
                 Fluttertoast.showToast(
@@ -273,6 +274,9 @@ class _Register_setup extends State<Register_setup> {
                     textColor: Colors.white);
               }
             } else if ("password" == key) {
+              setState(() {
+                isLoading = false;
+              });
               // show password erros like this
               for (var message in messages) {
                 Fluttertoast.showToast(
@@ -284,6 +288,9 @@ class _Register_setup extends State<Register_setup> {
                     textColor: Colors.white);
               }
             } else if ("username" == key) {
+              setState(() {
+                isLoading = false;
+              });
               // show password erros like this
               for (var message in messages) {
                 Fluttertoast.showToast(

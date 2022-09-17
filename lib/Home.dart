@@ -168,8 +168,8 @@ class _Home extends State<Home> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     // checkLoginStatus();
     futureAlbum = loaddata();
     sliDer = ongoingSlider();

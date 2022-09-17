@@ -224,7 +224,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                       // border: Border(bottom: BorderSide(color: Colors.grey, width: 0.8))
                     ),
                     width: width,
-                    height: height * 0.10,
+                    height: height * 0.08,
                     child: TabBar(
                       indicatorColor: Colors.transparent,
                       unselectedLabelColor: Colors.grey,
@@ -241,7 +241,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "${post}",
+                                "",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -256,7 +256,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "${Point}",
+                                "",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -271,7 +271,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "${followers}",
+                                "",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -286,7 +286,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                               child: Column(
                             children: [
                               Text(
-                                "${followings}",
+                                "",
                                 style: TextStyle(color: Colors.white),
                               ),
                               Text(
@@ -309,7 +309,7 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                     Container(
                       margin: EdgeInsets.fromLTRB(width * 0.05, 0, 0, 0),
                       width: width * 0.90,
-                      height: height * 0.32,
+                      height: height * 0.41,
                       child: TabBarView(
                           controller: _controller,
                           children: <Widget>[

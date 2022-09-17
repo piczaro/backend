@@ -11,6 +11,7 @@ import 'mydrawer.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'Appbar.dart';
 class Mybalance extends StatefulWidget {
   const Mybalance({
     Key? key,
@@ -21,6 +22,7 @@ class Mybalance extends StatefulWidget {
 }
 
 class _Mybalance extends State<Mybalance> {
+  late Future<int> futureAlbum;
   int counter = 2;
   String _title = "Wallet";
   final storage = new LocalStorage('my_data');
@@ -33,10 +35,11 @@ class _Mybalance extends State<Mybalance> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-    setState(() {
-      // useremail  = storage.getItem('Usermail');
-      // gender  = storage.getItem('usergender');
-    });
+    futureAlbum = loaddata();
+    // setState(() {
+    //   // useremail  = storage.getItem('Usermail');
+    //   // gender  = storage.getItem('usergender');
+    // });
   }
 
   @override
@@ -46,7 +49,7 @@ class _Mybalance extends State<Mybalance> {
   }
 
   bool isLoading = false;
-  void openCheckout( String name) async {
+  void openCheckout(String name) async {
     setState(() {
       isLoading = true;
     });
@@ -70,10 +73,9 @@ class _Mybalance extends State<Mybalance> {
       debugPrint('Error: e');
     }
   }
+
   void postAbalance(String amount) async {
-    Map<String, dynamic> jsonMap_body = {
-      "amount":amount
-    };
+    Map<String, dynamic> jsonMap_body = {"amount": amount};
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final user_id = await storage.getItem('user_id');
@@ -93,15 +95,18 @@ class _Mybalance extends State<Mybalance> {
       var post = jsonDecode(response.body);
       print(post);
       Fluttertoast.showToast(
-            msg: "Successfully Add Your Balance",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromARGB(255, 38, 131, 15),
-            textColor: Color.fromARGB(255, 255, 255, 255));
-      
+          msg: "Successfully Add Your Balance",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color.fromARGB(255, 38, 131, 15),
+          textColor: Color.fromARGB(255, 255, 255, 255));
     }
+    setState(() {
+      futureAlbum = loaddata();
+    });
   }
+
   void _handlePaymentError(PaymentFailureResponse response) {
     print('Error Response: $response');
     // Fluttertoast.showToast(
@@ -118,7 +123,9 @@ class _Mybalance extends State<Mybalance> {
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     postAbalance(addAmount.toString());
   }
+
   int addAmount = 0;
+  int withdrawaddAmount = 0;
   int balance = 0;
   String dropdownvalue = 'Item 1';
   var items = [
@@ -128,7 +135,7 @@ class _Mybalance extends State<Mybalance> {
     'Item 4',
     'Item 5',
   ];
-  
+
   Future<int> loaddata() async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
@@ -152,6 +159,41 @@ class _Mybalance extends State<Mybalance> {
     }
   }
 
+  void withDrawAbalance( amount) async {
+    Map<String, dynamic> jsonMap_body = {"amount": amount};
+    final storage = LocalStorage('my_data');
+    final token = await storage.getItem('jwt_token');
+    final user_id = await storage.getItem('user_id');
+    setState(() {
+      isLoading = true;
+    });
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/api/withdraw_request/${user_id}'),
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token}',
+      },
+      body: json.encode(jsonMap_body),
+    );
+    if (response.statusCode == 200) {
+      var post = jsonDecode(response.body);
+      print(post);
+      Fluttertoast.showToast(
+          msg: "WithDraw Amount Successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color.fromARGB(255, 38, 131, 15),
+          textColor: Color.fromARGB(255, 255, 255, 255));
+    }
+    setState(() {
+      futureAlbum = loaddata();
+    });
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  final _formKeyWithdraw = GlobalKey<FormState>();
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -160,79 +202,80 @@ class _Mybalance extends State<Mybalance> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.10),
-        child: AppBar(
-          // leading: Column(
-          //   mainAxisAlignment: MainAxisAlignment.end,
-          //   children: [
-          //     IconButton(
-          //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-          //       onPressed: () => Navigator.of(context).pop(),
-          //     ),
-          //   ],
-          // ),
-          title: Center(
-            child: Text(
-              _title,
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            // Using Stack to show Notification Badge
-            Center(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                child: Stack(
-                  children: <Widget>[
-                    IconButton(
-                        icon: Icon(
-                          Icons.notifications,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            counter = 0;
-                          });
-                        }),
-                    Positioned(
-                      right: 11,
-                      top: 11,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-          centerTitle: true,
-          toolbarHeight: 100,
-          backgroundColor: const Color(0xff1042aa),
-        ),
+        preferredSize: Size.fromHeight(height * 0.08),
+        child : CustomAppBar(title:_title),
+        // child: AppBar(
+        //   // leading: Column(
+        //   //   mainAxisAlignment: MainAxisAlignment.end,
+        //   //   children: [
+        //   //     IconButton(
+        //   //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+        //   //       onPressed: () => Navigator.of(context).pop(),
+        //   //     ),
+        //   //   ],
+        //   // ),
+        //   title: Center(
+        //     child: Text(
+        //       _title,
+        //       style: TextStyle(
+        //         fontSize: 20,
+        //       ),
+        //     ),
+        //   ),
+        //   actions: <Widget>[
+        //     // Using Stack to show Notification Badge
+        //     Center(
+        //       child: Container(
+        //         margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+        //         child: Stack(
+        //           children: <Widget>[
+        //             IconButton(
+        //                 icon: Icon(
+        //                   Icons.notifications,
+        //                   size: 30,
+        //                 ),
+        //                 onPressed: () {
+        //                   setState(() {
+        //                     counter = 0;
+        //                   });
+        //                 }),
+        //             Positioned(
+        //               right: 11,
+        //               top: 11,
+        //               child: Container(
+        //                 padding: const EdgeInsets.all(2),
+        //                 decoration: BoxDecoration(
+        //                   color: Colors.red,
+        //                   borderRadius: BorderRadius.circular(6),
+        //                 ),
+        //                 constraints: const BoxConstraints(
+        //                   minWidth: 18,
+        //                   minHeight: 18,
+        //                 ),
+        //                 child: const Text(
+        //                   '1',
+        //                   style: TextStyle(
+        //                     color: Colors.white,
+        //                     fontSize: 12,
+        //                   ),
+        //                   textAlign: TextAlign.center,
+        //                 ),
+        //               ),
+        //             )
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        //   centerTitle: true,
+        //   toolbarHeight: 100,
+        //   backgroundColor: const Color(0xff1042aa),
+        // ),
       ),
       body: SingleChildScrollView(
           child: FutureBuilder<int>(
               future:
-                  loaddata(), // a previously-obtained Future<String> or null
+                  futureAlbum, // a previously-obtained Future<String> or null
               builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
@@ -428,8 +471,58 @@ class _Mybalance extends State<Mybalance> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(
-                                height: 100,
+                              Container(
+                                margin: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text("Enter amount"),
+                                  ],
+                                ),
+                              ),
+                              Form(
+                                key: _formKey,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontSize: 18,
+                                        fontFamily: 'SFPRO regular'),
+                                    decoration: const InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xff979197),
+                                            width: 1.5),
+                                      ),
+                                      hintText: 'Enter Deposit Amount',
+                                      hintStyle: TextStyle(
+                                          fontSize: 13.0,
+                                          fontFamily: 'SFPRO reqular',
+                                          color: Color.fromARGB(255, 0, 0, 0)),
+                                    ),
+                                    controller: TextEditingController(
+                                        text: "${addAmount.toString()}"),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter some amount';
+                                      } else if (value == 0) {
+                                        return 'Please enter value greater than zero';
+                                      }
+                                      final n = num.tryParse(value);
+                                      if (n == null) {
+                                        return '"$value" is not a valid number';
+                                      }
+                                      var amount = int.parse(value);
+                                      setState(() {
+                                        addAmount = amount;
+                                      });
+                                      return null;
+                                    },
+                                  ),
+                                ),
                               ),
                               Container(
                                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -437,7 +530,9 @@ class _Mybalance extends State<Mybalance> {
                                 height: height * 0.07,
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      openCheckout("Add money");
+                                      if (_formKey.currentState!.validate()) {
+                                        openCheckout("Add money");
+                                      }
                                     },
                                     child: const Text(
                                       "Add Money",
@@ -490,34 +585,49 @@ class _Mybalance extends State<Mybalance> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                                child: TextFormField(
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontFamily: 'SFPRO regular'),
-                                  decoration: const InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Color(0xff979197), width: 1.5),
-                                    ),
-                                    hintText: 'Email',
-                                    hintStyle: TextStyle(
-                                        fontSize: 20.0,
-                                        fontFamily: 'SFPRO reqular',
-                                        color: Colors.white),
-                                    prefixIcon: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 0), // add padding to adjust icon
-                                      child: Icon(
-                                        IconData(
-                                          0xe3c3,
-                                          fontFamily: 'MaterialIcons',
-                                        ),
-                                        color: Colors.white,
+                              Form(
+                                key: _formKeyWithdraw,
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontSize: 18,
+                                        fontFamily: 'SFPRO regular'),
+                                    decoration: const InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xff979197),
+                                            width: 1.5),
                                       ),
+                                      hintText: 'Enter Withdraw Amount',
+                                      hintStyle: TextStyle(
+                                          fontSize: 13.0,
+                                          fontFamily: 'SFPRO reqular',
+                                          color: Color.fromARGB(255, 0, 0, 0)),
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter some amount';
+                                      } else if (value == 0) {
+                                        return 'Please enter value greater than zero';
+                                      }
+
+                                      var amount = int.parse(value);
+                                      if(amount == 0){
+                                        return 'Please enter value greater than zero';
+                                      }
+                                      else if (amount > snapshot.data!.toInt()) {
+                                        return 'Please enter amount less than ${snapshot.data}';
+                                      }
+
+                                      setState(() {
+                                        withdrawaddAmount = amount;
+                                      });
+                                      return null;
+                                    },
                                   ),
                                 ),
                               ),
@@ -526,7 +636,12 @@ class _Mybalance extends State<Mybalance> {
                                 width: width * 0.80,
                                 height: height * 0.07,
                                 child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (_formKeyWithdraw.currentState!
+                                          .validate()) {
+                                        withDrawAbalance(withdrawaddAmount);
+                                      }
+                                    },
                                     child: const Text(
                                       "Transfer Bank Account",
                                       style: TextStyle(
@@ -603,7 +718,7 @@ class _Mybalance extends State<Mybalance> {
                 //   color: Colors.blue,
                 // ));
               })),
-      drawer: DrawerWidget(),
+      drawer: Drawer(child: DrawerWidget()), 
     );
   }
 }

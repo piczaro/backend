@@ -14,7 +14,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:localstorage/localstorage.dart';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+import 'Forgot_password.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -60,6 +60,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       "email": email,
       "password": password,
     };
+    if (logintype == "email") {
+      jsonMap_body = {
+        "email": email,
+        "password": password,
+      };
+    } else if (logintype == "mobile") {
+      jsonMap_body = {
+        "email": email,
+        "password": password,
+      };
+    }
+
     try {
       setState(() {
         isLoading = true;
@@ -80,6 +92,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           await storage.setItem('user_id', post['data']['id']);
           await storage.setItem('username', post['data']['username']);
           await storage.setItem('user_type', post['data']['user_type']);
+          await storage.setItem('referal_code', post['data']['referal_code']);
           print(post['data']['id']);
 
           Future.delayed(const Duration(milliseconds: 1000), () {
@@ -87,16 +100,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               isLoading = false;
             });
             Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
+                context,
+                MaterialPageRoute(
                   builder: (context) => const Dashboard(
-                        index: 0,
-                        profileindex: 0,
-                      ),
-                     
-              ),
-              (Route<dynamic> route) => false
-            );
+                    index: 0,
+                    profileindex: 0,
+                  ),
+                ),
+                (Route<dynamic> route) => false);
           });
         } else if (post["data"] == null || post["token"] == null) {
           setState(() {
@@ -500,6 +511,31 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               },
                             ),
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Forgot_password(),
+                                      ));
+                                },
+                                child: Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                  child: Text(
+                                    "Forgot Password",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontFamily: 'SFPRO reqular'),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ],
                       )),
                     ]),
@@ -511,20 +547,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     height: height * 0.08,
                     child: ElevatedButton(
                         onPressed: () {
-                          // showModalBottomSheet(
-                          //   shape: RoundedRectangleBorder(
-                          //     borderRadius: BorderRadius.circular(30.0),
-                          //   ),
-                          //   context: context,
-                          //   isScrollControlled: true,
-                          //   builder: (BuildContext context) {
-                          //     return const Bottommodal();
-                          //   }
-                          // );
-                          if (formGlobalKey.currentState!.validate()) {
-                            FocusScope.of(context).unfocus();
+                          print(tabsPosition);
+                          if (tabsPosition == 0) {
+                            showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return const Bottommodal();
+                                });
+                          } else {
+                            if (formGlobalKey.currentState!.validate()) {
+                              FocusScope.of(context).unfocus();
 
-                            createAlbum("email");
+                              createAlbum("email");
+                            }
                           }
                         },
                         child: isLoading

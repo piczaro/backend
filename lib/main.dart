@@ -6,9 +6,12 @@ import 'package:pixzaro/Dashboard.dart';
 import 'Dashboard.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<void> main() async {
-  final storage = new LocalStorage('my_data');
+void main() async {
+  
+  
+  final storage = LocalStorage('my_data');
   // String? token;
+  await storage.ready;
   final token = await storage.getItem('jwt_token');
   print(token);
   print("token");
@@ -27,13 +30,14 @@ class MyApp extends StatelessWidget {
     final storage = new LocalStorage('my_data');
     final token = await storage.getItem("jwt_token");
     print(token);
-    if (token != null) {
-      MaterialPageRoute(
-          builder: (context) => const Dashboard(
-                index: 0,
-                profileindex: 0,
-              ));
-    }
+    print("askdhfjksahfkjshdakf");
+    // if (token != null) {
+    //   MaterialPageRoute(
+    //       builder: (context) => const Dashboard(
+    //             index: 0,
+    //             profileindex: 0,
+    //           ));
+    // }
   }
 
   // This widget is the root of your application.
@@ -56,23 +60,43 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<String> futureAlbum;
-
+   final storage = new LocalStorage('my_data');
   Future<String> loaddata() async {
+     print("loaddata");
     String isnotloged = "true";
-    final storage = LocalStorage('my_data');
+   
     final token = await storage.getItem('jwt_token');
+   
     print(token);
     if (token != null) {
       _changePage();
     }
     return isnotloged;
   }
-
   @override
   void initState() {
     super.initState();
-    futureAlbum = loaddata();
+    checkPreviousSessionAndRedirect();
+    //  print("asuifdhjksadfhljks");
   }
+  void checkPreviousSessionAndRedirect() async {
+    await storage.ready;
+    final token = await storage.getItem("jwt_token");
+    print(token);
+    print("checkPreviousSessionAndRedirect");
+    if (token != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Dashboard(
+                  index: 0,
+                  profileindex: 0,
+                )),
+      );
+    }
+  }
+
+  
 
   _changePage() {
     Navigator.of(context).pushReplacement(
