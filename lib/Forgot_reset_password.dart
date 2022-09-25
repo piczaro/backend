@@ -38,6 +38,7 @@ class Forgot_reset_password extends StatefulWidget {
 class _Forgot_reset_password extends State<Forgot_reset_password> {
   String email = '';
   String password = '';
+  String confirmpassword = '';
   final storage = new LocalStorage('my_data');
   bool clikc = true;
   String socialAuth = '';
@@ -54,22 +55,53 @@ class _Forgot_reset_password extends State<Forgot_reset_password> {
     "username": "username",
     "gender": "Male"
   };
-  
+  bool _passwordVisible = false;
+  bool _RepasswordVisible = false;
   Future<http.Response?> createemail_album() async {
-    
+    var email = await storage.getItem("forgot_mail");
+    var otp = await storage.getItem("forgot_otp");
 
-    if (email != '') {
-      await storage.setItem('forgot_mail', email);
+    if (confirmpassword != '') {
+      Map<String, dynamic> jsonMap_body = {
+        "email": email,
+        "otp": otp,
+        "password": confirmpassword
+      };
+      try {
+        setState(() {
+          isLoading = true;
+        });
+        final response = await http.post(
+          Uri.parse('${dotenv.env['API_URL']}/api/password_reset'),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: json.encode(jsonMap_body),
+        );
+        print(response);
+        if (response.statusCode == 200) {
+          var post = jsonDecode(response.body);
+          print(post);
+          if (post["message"] == "Password has been successfully changed") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          } else if (post["message"] == "Invalid") {
+            Fluttertoast.showToast(
+                msg: "Invalid OTP",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color.fromARGB(255, 216, 19, 19),
+                textColor: Color.fromARGB(255, 255, 255, 255));
+          }
+        }
+      } catch (e) {}
     }
 
-    
-
     // String social_data  = storage.getItem('register_type');
-    
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
   }
 
   bool isLoading = false;
@@ -212,12 +244,12 @@ class _Forgot_reset_password extends State<Forgot_reset_password> {
                       Container(
                         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                         child: TextFormField(
-                          obscureText: true,
+                          obscureText: !_passwordVisible,
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontFamily: 'SFPRO regular'),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0xff979197), width: 1.5),
@@ -234,6 +266,21 @@ class _Forgot_reset_password extends State<Forgot_reset_password> {
                                 Icons.vpn_key,
                                 color: Colors.white,
                               ),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                // Based on passwordVisible state choose the icon
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
                             ),
                           ),
                           validator: (val) {
@@ -252,12 +299,12 @@ class _Forgot_reset_password extends State<Forgot_reset_password> {
                       Container(
                         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                         child: TextFormField(
-                          obscureText: true,
+                          obscureText: !_RepasswordVisible,
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontFamily: 'SFPRO regular'),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Color(0xff979197), width: 1.5),
@@ -275,14 +322,31 @@ class _Forgot_reset_password extends State<Forgot_reset_password> {
                                 color: Colors.white,
                               ),
                             ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                // Based on passwordVisible state choose the icon
+                                _RepasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _RepasswordVisible = !_RepasswordVisible;
+                                });
+                              },
+                            ),
                           ),
                           validator: (val) {
-                            if (val != '') {
+                            if (val != '') {}
+                            if (password == val) {
                               setState(() {
-                                password = val!;
+                                confirmpassword = val!;
                               });
+                            } else {
+                              return "Password not match";
                             }
-
                             return val!.isEmpty
                                 ? 'please enter a password'
                                 : null;
@@ -300,6 +364,7 @@ class _Forgot_reset_password extends State<Forgot_reset_password> {
                         onPressed: () {
                           if (formGlobalKey.currentState!.validate()) {
                             FocusScope.of(context).unfocus();
+
                             createemail_album();
                           }
                           // showModalBottomSheet(

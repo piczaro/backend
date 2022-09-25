@@ -23,6 +23,7 @@ import 'package:flutter/gestures.dart';
 import 'Dashboard.dart';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'Appbar.dart';
 class Contest extends StatefulWidget {
   final int id;
   const Contest({Key? key, required this.id}) : super(key: key);
@@ -47,7 +48,7 @@ class _Contest extends State<Contest> {
     );
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body)['data'];
-      // print(jsonData);
+      print(jsonData);
       //  print(jsonDecode(response.body)['paid']);
       if (jsonDecode(response.body)['paid'] != null) {
        
@@ -85,7 +86,7 @@ class _Contest extends State<Contest> {
     {'key': 'sdfjsfjk', 'value': 70}
   ];
   int counter = 0;
-
+  String _title = "Upcomming contest";
   @override
   Widget build(BuildContext context) {
     // double width = MediaQuery.of(context).size.width;
@@ -93,71 +94,8 @@ class _Contest extends State<Contest> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 192, 192, 192),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.10),
-        child: AppBar(
-          leading: Center(
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          title: const Center(
-            child: Text(
-              'Upcomming Contest',
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            // Using Stack to show Notification Badge
-            Center(
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                child: Stack(
-                  children: <Widget>[
-                    IconButton(
-                        icon: const Icon(
-                          Icons.notifications,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            counter = 0;
-                          });
-                        }),
-                    Positioned(
-                      right: 11,
-                      top: 11,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-          centerTitle: true,
-          toolbarHeight: 100,
-          backgroundColor: const Color(0xff1042aa),
-        ),
+        preferredSize: Size.fromHeight(height * 0.08),
+        child: CustomAppBar(title: _title),
       ),
       body: SingleChildScrollView(
         child: FutureBuilder(
@@ -685,7 +623,7 @@ class _Contest_pay extends State<Contest_pay> {
     // Fluttertoast.showToast(
     //     msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIos: 4);
   }
-
+  String _title = "Contest Details Screen";
   //  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
@@ -695,77 +633,8 @@ class _Contest_pay extends State<Contest_pay> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.10),
-        child: AppBar(
-          leading: Center(
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          title: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Text(
-                  'Contest Details Screen',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            // Using Stack to show Notification Badge
-            Center(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                child: Stack(
-                  children: <Widget>[
-                    IconButton(
-                        icon: Icon(
-                          Icons.notifications,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            counter = 0;
-                          });
-                        }),
-                    Positioned(
-                      right: 11,
-                      top: 11,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 18,
-                          minHeight: 18,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-          centerTitle: true,
-          toolbarHeight: 100,
-          backgroundColor: const Color(0xff1042aa),
-        ),
+        preferredSize: Size.fromHeight(height * 0.08),
+        child: CustomAppBar(title: _title,)
       ),
       body: SingleChildScrollView(
           child: Container(

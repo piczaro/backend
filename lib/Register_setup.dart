@@ -24,7 +24,7 @@ class _Register_setup extends State<Register_setup> {
   bool woman = false;
   bool mixed = false;
   String username = "";
-
+  String Referral_code = "";
   Map jsonMap_body = new Map<String, dynamic>();
 
   Future<http.Response?> createAlbum(String logintype) async {
@@ -215,7 +215,8 @@ class _Register_setup extends State<Register_setup> {
         "email": email,
         "password": password,
         "username": username,
-        "gender": "Male"
+        "gender": "Male",
+        "referal_code":Referral_code
       };
       final response = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/api/register'),
@@ -718,6 +719,15 @@ class _Register_setup extends State<Register_setup> {
                                 filled: true,
                                 fillColor: Color(0xff1c40a0),
                               ),
+                              validator: (val) {
+                                if (val != '') {
+                                  setState(() {
+                                    Referral_code = val.toString();
+                                  });
+                                }
+
+                               
+                              },
                             ),
                           ],
                         ),

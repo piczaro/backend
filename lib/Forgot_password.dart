@@ -58,24 +58,55 @@ class _Forgot_password extends State<Forgot_password> {
   };
   bool otp = false;
   Future<http.Response?> createemail_album() async {
-    
-
     if (email != '') {
       await storage.setItem('forgot_mail', email);
+      Map<String, dynamic> jsonMap_body = {
+        "email": email,
+      };
+      try {
+        setState(() {
+          isLoading = true;
+        });
+        final response = await http.post(
+          Uri.parse('${dotenv.env['API_URL']}/api/request_otp'),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: json.encode(jsonMap_body),
+        );
+        print(response);
+        if (response.statusCode == 200) {
+          var post = jsonDecode(response.body);
+          print(post);
+          if (post["message"] == "OTP sent successfully") {
+            Fluttertoast.showToast(
+                msg: "OTP sent to your mail",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color.fromARGB(255, 4, 180, 4),
+                textColor: Color.fromARGB(255, 255, 255, 255));
+            setState(() {
+              otp = true;
+            });
+          } else if (post["message"] == "Invalid") {
+            Fluttertoast.showToast(
+                msg: "Invalid mail",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color.fromARGB(255, 4, 180, 4),
+                textColor: Color.fromARGB(255, 224, 9, 9));
+          }
+        }
+      } catch (e) {}
+      setState(() {
+        isLoading = false;
+      });
     }
 
-    setState(() {
-      otp = true;
-    });
-    if(OTP !=  ""){
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Forgot_reset_password()),
-    );
-    }
     // String social_data  = storage.getItem('register_type');
-
-    
   }
 
   bool isLoading = false;
@@ -108,6 +139,46 @@ class _Forgot_password extends State<Forgot_password> {
       }
     } else {
       throw Exception('Failed to create album.');
+    }
+  }
+
+  void verify_otp() async {
+    if (OTP != "") {
+      await storage.setItem('forgot_otp', OTP);
+      Map<String, dynamic> jsonMap_body = {"email": email, "otp": OTP};
+      try {
+        setState(() {
+          isLoading = true;
+        });
+        final response = await http.post(
+          Uri.parse('${dotenv.env['API_URL']}/api/verify_otp'),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: json.encode(jsonMap_body),
+        );
+        print(response);
+        if (response.statusCode == 200) {
+          var post = jsonDecode(response.body);
+          print(post);
+          if (post["message"] == "User Verfied") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const Forgot_reset_password()),
+            );
+          } else if (post["message"] == "Invalid OTP") {
+            Fluttertoast.showToast(
+                msg: "Invalid OTP",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color.fromARGB(255, 216, 19, 19),
+                textColor: Color.fromARGB(255, 255, 255, 255));
+          }
+        }
+      } catch (e) {}
     }
   }
 
@@ -257,49 +328,50 @@ class _Forgot_password extends State<Forgot_password> {
                           },
                         ),
                       ),
-                      if(otp)Container(
-                        margin: const EdgeInsets.fromLTRB(30, 5, 30, 0),
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: 'SFPRO regular'),
-                          decoration: const InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color(0xff979197), width: 1.5),
-                            ),
-                            hintText: 'Enter Otp',
-                            hintStyle: TextStyle(
-                                fontSize: 20.0,
-                                fontFamily: 'SFPRO reqular',
-                                color: Colors.white),
-                            prefixIcon: Padding(
-                              padding: EdgeInsets.only(
-                                  top: 0), // add padding to adjust icon
-                              child: Icon(
-                                IconData(
-                                  0xe3c3,
-                                  fontFamily: 'MaterialIcons',
-                                ),
+                      if (otp)
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(30, 5, 30, 0),
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            style: const TextStyle(
                                 color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: 'SFPRO regular'),
+                            decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color(0xff979197), width: 1.5),
+                              ),
+                              hintText: 'Enter Otp',
+                              hintStyle: TextStyle(
+                                  fontSize: 20.0,
+                                  fontFamily: 'SFPRO reqular',
+                                  color: Colors.white),
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 0), // add padding to adjust icon
+                                child: Icon(
+                                  IconData(
+                                    0xe3c3,
+                                    fontFamily: 'MaterialIcons',
+                                  ),
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                          validator: (val) {
-                            if (val != '') {
+                            validator: (val) {
+                              if (val != '') {
                                 setState(() {
                                   OTP = val!;
                                 });
-                            }
+                              }
 
-                            return val!.isEmpty
-                                ? 'please provide a email'
-                                : null;
-                          },
+                              return val!.isEmpty
+                                  ? 'please provide a email'
+                                  : null;
+                            },
+                          ),
                         ),
-                      ),
                     ],
                   )),
                   Container(
@@ -311,10 +383,12 @@ class _Forgot_password extends State<Forgot_password> {
                         onPressed: () {
                           if (formGlobalKey.currentState!.validate()) {
                             FocusScope.of(context).unfocus();
-                            createemail_album();
-                          }else if(otp){
-                            FocusScope.of(context).unfocus();
-                            createemail_album();
+                            if (!otp) {
+                              createemail_album();
+                            } else if (otp) {
+                              FocusScope.of(context).unfocus();
+                              verify_otp();
+                            }
                           }
                           // showModalBottomSheet(
                           // shape: RoundedRectangleBorder(

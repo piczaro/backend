@@ -21,23 +21,34 @@ import 'mydrawer.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-class CustomAppBar extends StatelessWidget {
-   int counter = 2;
+
+class CustomAppBar extends StatefulWidget {
+  final String title;
+  const CustomAppBar({Key? key, required this.title}) : super(key: key);
+
+  @override
+  State<CustomAppBar> createState() => _CustomAppBar();
+}
+
+class _CustomAppBar extends State<CustomAppBar> {
+  int counter = 2;
   final storage = new LocalStorage('my_data');
   String? user_type;
-  String title;
-  CustomAppBar({ required this.title});
-    @override
+  late Future<int> futureAlbum;
+  @override
   void initState() {
-    loaddata();
+    futureAlbum =loaddata();
+    print("sjfsf");
   }
+
   int unread_count = 0;
-  void loaddata() async {
+  Future<int> loaddata() async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
     final user_id = await storage.getItem('user_id');
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/api/get_notification_of_users/${user_id}'),
+      Uri.parse(
+          '${dotenv.env['API_URL']}/api/get_unread_notification_count/${user_id}'),
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -45,23 +56,27 @@ class CustomAppBar extends StatelessWidget {
       },
     );
     if (response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body)['data'];
-      unread_count = jsonDecode(response.body)['unread_count'];
-      print(jsonData);
-      return jsonData;
+      // var jsonData = jsonDecode(response.body)['data'];
+      setState(() {
+         unread_count = jsonDecode(response.body)['unread_count'];
+        // unread_count = 1;
+      });
+
+      print(response);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
       throw Exception('Failed to load album');
     }
+    return unread_count;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
       title: Center(
         child: Text(
-          title,
+          widget.title,
           style: TextStyle(
             fontSize: 20,
           ),
@@ -83,15 +98,13 @@ class CustomAppBar extends StatelessWidget {
         // Using Stack to show Notification Badge
         Center(
           child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Notifications()),
-              );
-            },
+            onTap: () {},
             child: Container(
               margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-              child: Stack(
+              child: FutureBuilder(
+            future: futureAlbum,
+            builder: (context, AsyncSnapshot snapshot) {
+              return  Stack(
                 children: <Widget>[
                   IconButton(
                       icon: Icon(
@@ -99,33 +112,40 @@ class CustomAppBar extends StatelessWidget {
                         size: 30,
                       ),
                       onPressed: () {
-                        
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Notifications()),
+                        );
                       }),
-                  if(unread_count > 0) Positioned(
-                    right: 11,
-                    top: 11,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 18,
-                        minHeight: 18,
-                      ),
-                      child:  Text(
-                        '${unread_count}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                  if (unread_count > 0)
+                    Positioned(
+                      right: 11,
+                      top: 11,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6),
                         ),
-                        textAlign: TextAlign.center,
+                        constraints: const BoxConstraints(
+                          minWidth: 18,
+                          minHeight: 18,
+                        ),
+                        child: Text(
+                          '${unread_count}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  )
+                    )
                 ],
-              ),
+              );
+            })
+              
             ),
           ),
         ),

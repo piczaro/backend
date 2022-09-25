@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'Changepassword.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Appbar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 class Settings extends StatefulWidget {
   const Settings({
     Key? key,
@@ -27,6 +29,7 @@ class _Settings extends State<Settings> {
   String dropdownvalue = '';
   String name = "";
   String user_type = "";
+  String profile_pic = "";
   Future<Map<String, dynamic>> loaddata() async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
@@ -41,7 +44,6 @@ class _Settings extends State<Settings> {
       },
     );
     if (response.statusCode == 200) {
-      
       var jsonData = jsonDecode(response.body)['data'];
       print(jsonData);
       if (jsonData != null) {
@@ -50,13 +52,62 @@ class _Settings extends State<Settings> {
           dropdownvalue = jsonData['gender'];
           name = jsonData['name'];
           user_type = jsonData['user_type'];
+          profile_pic = jsonData['profile_pic'];
         });
       }
     } else {}
     setState(() {
-        loading = false;
-      });
+      loading = false;
+    });
     return jsonDecode(response.body)['data'];
+  }
+
+  bool isLoading = false;
+  Future<http.Response?> Profile_upload(file) async {
+    Map<String, dynamic> jsonMap_body = {
+      // "user_id": 16,
+      // "contest_id": contest_id,
+      // "file": file
+    };
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final storage = LocalStorage('my_data');
+      final token = await storage.getItem('jwt_token');
+      final user_id = await storage.getItem('user_id');
+      final response = http.MultipartRequest(
+        "POST",
+        Uri.parse('${dotenv.env['API_URL']}/api/profile_pic_update/${user_id}'),
+        // headers: {
+        //   'Content-type': 'application/json',
+        //   'Accept': 'application/json',
+        //   'Authorization': 'Bearer ${token}',
+        // },
+        // body: json.encode(jsonMap_body),
+      );
+
+      response.headers['Content-type'] = 'application/json';
+      response.headers['Accept'] = 'application/json';
+      response.headers['Authorization'] = 'Bearer ${token}';
+      
+
+      response.files.add(await http.MultipartFile.fromPath("profile_pic", file.path));
+      var res = await response.send();
+      // print(res.body);
+      var streaMresponse = await http.Response.fromStream(res);
+      final result = jsonDecode(streaMresponse.body) as Map<String, dynamic>;
+      // print(streaMresponse.body);
+      if (streaMresponse.statusCode == 200) {
+        var jsonBodyData = streaMresponse.body;
+        print(result['file']);
+
+        setState(() {
+          isLoading = false;
+          profile_pic = result['file'];
+        });
+      }
+    } catch (e) {}
   }
 
   late Future<Map<String, dynamic>> futureAlbum;
@@ -310,6 +361,68 @@ class _Settings extends State<Settings> {
                               },
                               child: const Text(
                                 "Edit",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: Color(0xffffa300),
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              )),
+                        ),
+                      if (user_type == "normal")
+                        Center(
+                          child: Container(
+                              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              width: width * 0.30,
+                              height: height * 0.15,
+                              child: CircleAvatar(
+                                radius: 30.0,
+                                child: CachedNetworkImage(
+                                  imageUrl: profile_pic != ""
+                                      ? "${dotenv.env['API_URL']}/profile_pic/${profile_pic}"
+                                      : 'https://picsum.photos/200',
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    width: 110.0,
+                                    height: 110.0,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.fill),
+                                    ),
+                                  ),
+                                  placeholder: (context, url) =>
+                                      new CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      new Icon(Icons.error),
+                                  maxHeightDiskCache: 200,
+                                  maxWidthDiskCache: 500,
+                                ),
+                              )),
+                        ),
+                      if (user_type == "normal")
+                        Container(
+                          width: width * 0.90,
+                          height: height * 0.07,
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                final result =
+                                  await FilePicker.platform.pickFiles();
+
+                              if (result == null) return;
+                              final file = result.files.first;
+                              if (file != null) {
+                                Profile_upload(file);
+                              }
+                              },
+                              child: const Text(
+                                "Change Profile pic",
                                 style: TextStyle(
                                   fontSize: 20,
                                 ),

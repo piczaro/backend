@@ -104,7 +104,7 @@ class _RegisterPageState extends State<Registerpage>
       throw Exception('Failed to create album.');
     }
   }
-
+    bool _passwordVisible = false;
   Future<void> _handleSignOut() => GoogleSignInApi.signout();
   Future signIn() async {
     try {
@@ -354,12 +354,12 @@ class _RegisterPageState extends State<Registerpage>
                           Container(
                             margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                             child: TextFormField(
-                              obscureText: true,
+                              obscureText: !_passwordVisible,
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontFamily: 'SFPRO regular'),
-                              decoration: const InputDecoration(
+                              decoration:  InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       color: Color(0xff979197), width: 1.5),
@@ -376,6 +376,21 @@ class _RegisterPageState extends State<Registerpage>
                                     Icons.vpn_key,
                                     color: Colors.white,
                                   ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    // Based on passwordVisible state choose the icon
+                                    _passwordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                  onPressed: () {
+                                    // Update the state i.e. toogle the state of passwordVisible variable
+                                    setState(() {
+                                      _passwordVisible = !_passwordVisible;
+                                    });
+                                  },
                                 ),
                               ),
                               validator: (val) {
@@ -438,7 +453,7 @@ class _RegisterPageState extends State<Registerpage>
                                 ],
                               )
                             : const Text(
-                                "Signin",
+                                "Sign up",
                                 style: TextStyle(
                                   fontSize: 20,
                                 ),
@@ -498,7 +513,39 @@ class _RegisterPageState extends State<Registerpage>
                       ),
                     ],
                   ),
+                  Container(
+                    width: width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(10, height * 0.04, 0, 0),
+                          child: RichText(
+                            text: TextSpan(
+                                text: 'Already have an account?',
+                                children: [
+                                  TextSpan(
+                                    text: ' Login in here',
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // print("The word touched is ");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginPage(),
+                                            ));
+                                      },
+                                  )
+                                ]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
+
               ),
             ),
           ),

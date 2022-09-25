@@ -15,6 +15,7 @@ import 'package:localstorage/localstorage.dart';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Forgot_password.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -32,12 +33,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Map jsonMap_body = new Map<String, dynamic>();
 
   // String? token;
-
+  bool _passwordVisible = false;
   final storage = new LocalStorage('my_data');
   @override
   void initState() {
     super.initState();
     checkPreviousSessionAndRedirect();
+    _passwordVisible = false;
   }
 
   void checkPreviousSessionAndRedirect() async {
@@ -93,6 +95,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           await storage.setItem('username', post['data']['username']);
           await storage.setItem('user_type', post['data']['user_type']);
           await storage.setItem('referal_code', post['data']['referal_code']);
+          await storage.setItem('profile_pic', post['data']['profile_pic']);
           print(post['data']['id']);
 
           Future.delayed(const Duration(milliseconds: 1000), () {
@@ -474,12 +477,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           Container(
                             margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                             child: TextFormField(
-                              obscureText: true,
+                              obscureText: !_passwordVisible,
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontFamily: 'SFPRO regular'),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       color: Color(0xff979197), width: 1.5),
@@ -496,6 +499,21 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     Icons.vpn_key,
                                     color: Colors.white,
                                   ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    // Based on passwordVisible state choose the icon
+                                    _passwordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                  onPressed: () {
+                                    // Update the state i.e. toogle the state of passwordVisible variable
+                                    setState(() {
+                                      _passwordVisible = !_passwordVisible;
+                                    });
+                                  },
                                 ),
                               ),
                               validator: (val) {
