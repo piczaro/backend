@@ -323,7 +323,7 @@ class _Find_my_friends extends State<Find_my_friends> {
                         ),
                         
                   ]))),
-      drawer: DrawerWidget(),
+      drawer: Drawer(child: DrawerWidget()),
     );
   }
 }

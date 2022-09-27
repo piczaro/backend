@@ -26,7 +26,10 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Container(
+      width: width,
       padding: EdgeInsets.fromLTRB(30, 10, 10, 10),
       color: Color(0xff1042aa),
       child: Column(
@@ -41,6 +44,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                  width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -72,6 +76,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -136,6 +141,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -167,6 +173,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -198,6 +205,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -229,6 +237,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -261,6 +270,7 @@ class DrawerWidget extends StatelessWidget {
                 );
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -288,7 +298,6 @@ class DrawerWidget extends StatelessWidget {
               onTap: () async {
                 user_type = await storage.getItem('user_type');
                 if (user_type == 'google') {
-                  
                   await GoogleSignInApi.signout().whenComplete(() async {
                     await storage.deleteItem("jwt_token");
                     Navigator.pushAndRemoveUntil(
@@ -307,6 +316,7 @@ class DrawerWidget extends StatelessWidget {
                 }
               },
               child: Container(
+                width: width,
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,

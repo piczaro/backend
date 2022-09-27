@@ -440,6 +440,7 @@ class _Settings extends State<Settings> {
               ),
           ],
         ),
-        drawer: DrawerWidget());
+        drawer: Drawer(child: DrawerWidget()),
+    );
   }
 }

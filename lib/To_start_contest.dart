@@ -154,7 +154,7 @@ class _To_start_contest extends State<To_start_contest> {
                                               //           "${snapshot.data[0]['start_datetime']}")
                                               //       .millisecondsSinceEpoch,
                                               // ),
-                                              CountdownTimer(
+                                              if(snapshot.data[index]['start_datetime'] != null)CountdownTimer(
                                                 endTime: DateTime.parse(
                                                         "${snapshot.data[index]['start_datetime']}")
                                                     .millisecondsSinceEpoch,

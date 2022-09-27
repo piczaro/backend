@@ -25,9 +25,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final storage = LocalStorage('my_data');
   MyApp({Key? key}) : super(key: key);
   void checkPreviousSessionAndRedirect() async {
-    final storage = new LocalStorage('my_data');
+    
     final token = await storage.getItem("jwt_token");
     print(token);
     print("askdhfjksahfkjshdakf");

@@ -12,6 +12,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Appbar.dart';
+
 class Mybalance extends StatefulWidget {
   const Mybalance({
     Key? key,
@@ -159,7 +160,7 @@ class _Mybalance extends State<Mybalance> {
     }
   }
 
-  void withDrawAbalance( amount) async {
+  void withDrawAbalance(amount) async {
     Map<String, dynamic> jsonMap_body = {"amount": amount};
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
@@ -203,7 +204,7 @@ class _Mybalance extends State<Mybalance> {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(height * 0.08),
-        child : CustomAppBar(title:_title),
+        child: CustomAppBar(title: _title),
         // child: AppBar(
         //   // leading: Column(
         //   //   mainAxisAlignment: MainAxisAlignment.end,
@@ -564,7 +565,7 @@ class _Mybalance extends State<Mybalance> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: const [
                                       Text(
-                                        "Change bank account",
+                                        "Add / change bank account",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontFamily: "SFPRO reqular",
@@ -616,10 +617,10 @@ class _Mybalance extends State<Mybalance> {
                                       }
 
                                       var amount = int.parse(value);
-                                      if(amount == 0){
+                                      if (amount == 0) {
                                         return 'Please enter value greater than zero';
-                                      }
-                                      else if (amount > snapshot.data!.toInt()) {
+                                      } else if (amount >
+                                          snapshot.data!.toInt()) {
                                         return 'Please enter amount less than ${snapshot.data}';
                                       }
 
@@ -718,7 +719,7 @@ class _Mybalance extends State<Mybalance> {
                 //   color: Colors.blue,
                 // ));
               })),
-      drawer: Drawer(child: DrawerWidget()), 
+      drawer: Drawer(child: DrawerWidget()),
     );
   }
 }
