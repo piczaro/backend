@@ -179,7 +179,7 @@ class _Home extends State<Home> {
   Widget build(BuildContext context) {
     counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"),
         "Completed", "d :", "h :", "m :", "s", "D ", "H ", "M", "S");
-    // double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     // String strDigits(int n) => n.toString().padLeft(2, '0');
     // final days = strDigits(myDuration.inDays); // <-- SEE HERE
@@ -427,7 +427,7 @@ class _Home extends State<Home> {
                 }
               }),
           Container(
-            margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+            margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Column(
               children: [
                 Center(
@@ -441,7 +441,7 @@ class _Home extends State<Home> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                   // child: TextField(
                   //   decoration: InputDecoration(
                   //     suffixIcon: const Icon(Icons.search),
@@ -478,6 +478,8 @@ class _Home extends State<Home> {
                           // scrollDirection: Axis.vertical,
                           physics: NeverScrollableScrollPhysics(),
                           // physics: ScrollPhysics(),
+                          // crossAxisSpacing: 8, 
+                          // mainAxisSpacing: 8,
                           // Create a grid with 2 columns. If you change the scrollDirection to
                           // horizontal, this produces 2 rows.
                           crossAxisCount: 2,
@@ -486,96 +488,101 @@ class _Home extends State<Home> {
                               List.generate(snapshot.data!.length, (index) {
                             return SingleChildScrollView(
                               child: Column(children: [
-                                Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(20, 0, 5, 0),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 20, 15, 5),
-                                  height: height * 0.20,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: const Color.fromARGB(
-                                              255, 201, 203, 206)),
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  child: Center(
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                10, 0, 10, 10),
-                                            child: Text(
-                                                "${snapshot.data[index]['name']}")),
-                                        // FadeInImage(
-                                        //   placeholder: circularProgressIndicator,
-                                        //   image: NetworkImage(
-                                        //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}"),
-                                        // ),
-                                        CachedNetworkImage(
-                                          placeholder: (context, url) =>
-                                              new Center(
-                                                  child:
-                                                      CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) =>
-                                              new Icon(Icons.error),
-                                          imageUrl:
-                                              '${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}',
-                                          maxHeightDiskCache: 100,
-                                          maxWidthDiskCache: 130,
-                                          width: 110,
-                                          height: 55,
-                                        ),
-                                        // CachedNetworkImage(
-                                        //   imageUrl:
-                                        //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}",
-                                        //   placeholder: (context, url) =>
-                                        //       const CircleAvatar(
-                                        //     backgroundColor: Colors.amber,
-                                        //     radius: 150,
-                                        //   ),
-                                        // ),
-                                        // FadeInImage.assetNetwork(
-                                        //   placeholder: 'images/loading.gif',
-                                        //   image:
-                                        //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}",
-                                        //   width: 110,
-                                        //   height: 55,
-                                        // ),
-                                        // Image.network("${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}"
-                                        //     ,
-                                        //     width: 110,
-                                        //     height: 65,
-                                        //     fit: BoxFit.fill),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Contest(
-                                                            id: snapshot
-                                                                    .data[index]
-                                                                ['id'])),
-                                              );
-                                            },
-                                            child: const Text(
-                                              "Join Contest",
-                                              style: TextStyle(
-                                                fontSize: 20,
+                                Center(
+                                  child: Container(
+                                    // margin:
+                                    //     const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    //     // EdgeInsets.,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 20, 15, 0),
+                                    height: height * 0.20,
+                                    width: width * 0.43,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 201, 203, 206)),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0)),
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  10, 0, 10, 10),
+                                              child: Text(
+                                                  "${snapshot.data[index]['name']}")),
+                                          // FadeInImage(
+                                          //   placeholder: circularProgressIndicator,
+                                          //   image: NetworkImage(
+                                          //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}"),
+                                          // ),
+                                          CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                new Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget: (context, url, error) =>
+                                                new Icon(Icons.error),
+                                            imageUrl:
+                                                '${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}',
+                                            maxHeightDiskCache: 100,
+                                            maxWidthDiskCache: 130,
+                                            width: 110,
+                                            height: 55,
+                                            
+                                          ),
+                                          // CachedNetworkImage(
+                                          //   imageUrl:
+                                          //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}",
+                                          //   placeholder: (context, url) =>
+                                          //       const CircleAvatar(
+                                          //     backgroundColor: Colors.amber,
+                                          //     radius: 150,
+                                          //   ),
+                                          // ),
+                                          // FadeInImage.assetNetwork(
+                                          //   placeholder: 'images/loading.gif',
+                                          //   image:
+                                          //       "${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}",
+                                          //   width: 110,
+                                          //   height: 55,
+                                          // ),
+                                          // Image.network("${dotenv.env['API_URL']}/category_images/${snapshot.data[index]['file']}"
+                                          //     ,
+                                          //     width: 110,
+                                          //     height: 65,
+                                          //     fit: BoxFit.fill),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Contest(
+                                                              id: snapshot
+                                                                      .data[index]
+                                                                  ['id'])),
+                                                );
+                                              },
+                                              child: const Text(
+                                                "Join Contest",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
                                               ),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                                primary:
-                                                    const Color(0xffffa300),
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        5, 0, 5, 0),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5.0),
-                                                ))),
-                                      ],
+                                              style: ElevatedButton.styleFrom(
+                                                  primary:
+                                                      const Color(0xffffa300),
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          5, 0, 5, 0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                  ))),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

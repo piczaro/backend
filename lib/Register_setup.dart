@@ -153,7 +153,7 @@ class _Register_setup extends State<Register_setup> {
         });
       }
     } else if (register_type == 'facebook') {
-      if (storage.getItem("fb_email")) {
+      if (storage.getItem("fb_email") != "") {
         Map<String, dynamic> jsonMap_body = {
           "displayName": storage.getItem("fb_name"),
           "email": storage.getItem("fb_email"),
@@ -165,12 +165,13 @@ class _Register_setup extends State<Register_setup> {
         };
         final response = await http.post(
           Uri.parse('${dotenv.env['API_URL']}/api/register'),
-          // headers: {
-          //     'Content-type': 'application/json',
-          //     'Accept': 'application/json'
-          // },
-          // body: jsonEncode(jsonMap_body),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: jsonEncode(jsonMap_body),
         );
+        print(jsonDecode(response.body));
         if (response.statusCode == 200) {
           var post = jsonDecode(response.body);
           if (post['message'] == 'Email Already Exists') {
@@ -187,7 +188,7 @@ class _Register_setup extends State<Register_setup> {
                 MaterialPageRoute(builder: (context) => const LoginPage()),
               );
             });
-          } else if (post['message'] == 'Successfully registerd') {
+          } else if (post['message'] == 'Successfully Registered') {
             Fluttertoast.showToast(
                 msg: post['message'],
                 toastLength: Toast.LENGTH_SHORT,
@@ -201,7 +202,52 @@ class _Register_setup extends State<Register_setup> {
                 MaterialPageRoute(builder: (context) => const LoginPage()),
               );
             });
-          }else{
+          } else {
+            post.forEach((key, messages) {
+              if ("email" == key) {
+                setState(() {
+                  isLoading = false;
+                });
+                // show email errors like this
+                for (var message in messages) {
+                  Fluttertoast.showToast(
+                      msg: message,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white);
+                }
+              } else if ("password" == key) {
+                setState(() {
+                  isLoading = false;
+                });
+                // show password erros like this
+                for (var message in messages) {
+                  Fluttertoast.showToast(
+                      msg: message,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white);
+                }
+              } else if ("username" == key) {
+                setState(() {
+                  isLoading = false;
+                });
+                // show password erros like this
+                for (var message in messages) {
+                  Fluttertoast.showToast(
+                      msg: message,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white);
+                }
+              }
+            });
             Future.delayed(const Duration(milliseconds: 1000), () {
               Navigator.push(
                 context,

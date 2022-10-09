@@ -18,7 +18,7 @@ import 'package:localstorage/localstorage.dart';
 import 'Register_setup.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'Bottom_modal.dart';
 // GoogleSignIn _googleSignIn = GoogleSignIn(
 //   // Optional clientId
 //   // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
@@ -38,6 +38,7 @@ class Registerpage extends StatefulWidget {
 class _RegisterPageState extends State<Registerpage>
     with TickerProviderStateMixin {
   String email = '';
+  String Mobile_number = '';
   String password = '';
   final storage = new LocalStorage('my_data');
   bool clikc = true;
@@ -73,7 +74,8 @@ class _RegisterPageState extends State<Registerpage>
       MaterialPageRoute(builder: (context) => const Register_setup()),
     );
   }
-   bool isLoading = false;
+
+  bool isLoading = false;
   Future<http.Response?> createAlbum(String logintype) async {
     final response = await http.post(
       Uri.parse('${dotenv.env['API_URL']}/api/register'),
@@ -104,7 +106,8 @@ class _RegisterPageState extends State<Registerpage>
       throw Exception('Failed to create album.');
     }
   }
-    bool _passwordVisible = false;
+
+  bool _passwordVisible = false;
   Future<void> _handleSignOut() => GoogleSignInApi.signout();
   Future signIn() async {
     try {
@@ -146,7 +149,7 @@ class _RegisterPageState extends State<Registerpage>
       final userData = await FacebookAuth.instance.getUserData();
       // final userData = await FacebookAuth.instance.getUserData(fields: "email,birthday,friends,gender,link");
       _userData = userData;
-      
+
       print(userData);
     } else {
       print(result.status);
@@ -159,20 +162,21 @@ class _RegisterPageState extends State<Registerpage>
           backgroundColor: Colors.red,
           textColor: Colors.yellow);
     } else {
-      await  storage.setItem('fb_name', _userData!["name"]);
-      await  storage.setItem('fb_email', _userData!["email"]);
-      await  storage.setItem('fb_db', _userData!["picture"]["data"]["url"]);      
-      await  storage.setItem('register_type', 'facebook');
+      await storage.setItem('fb_name', _userData!["name"]);
+      await storage.setItem('fb_email', _userData!["email"]);
+      await storage.setItem('fb_db', _userData!["picture"]["data"]["url"]);
+      await storage.setItem('register_type', 'facebook');
       Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Register_setup()),
-        );
+        context,
+        MaterialPageRoute(builder: (context) => const Register_setup()),
+      );
     }
     print(result);
   }
 
   int tabsPosition = 0;
   final formGlobalKey = GlobalKey<FormState>();
+  final formGlobalKey_mobile = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     TabController _controller =
@@ -188,98 +192,98 @@ class _RegisterPageState extends State<Registerpage>
             minHeight: MediaQuery.of(context).size.height,
           ),
           child: IntrinsicHeight(
-            child: Form(
-              key: formGlobalKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-                    child: const Text(
-                      "Let’s signup you in.",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 34,
-                          fontFamily: 'SFPRO semibold'),
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+                  child: const Text(
+                    "Let’s signup you in.",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 34,
+                        fontFamily: 'SFPRO semibold'),
                   ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(10, 7, 10, 0),
-                    child: const Text(
-                      "Welcome back",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontFamily: 'SFPRO reqular'),
-                    ),
+                ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 7, 10, 0),
+                  child: const Text(
+                    "Welcome back",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontFamily: 'SFPRO reqular'),
                   ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(10, 7, 10, 30),
-                    child: const Text(
-                      "You’ve been missed!",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: 'SFPRO light'),
-                    ),
+                ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 7, 10, 30),
+                  child: const Text(
+                    "You’ve been missed!",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: 'SFPRO light'),
                   ),
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                            width: width * 0.35,
-                            child: TabBar(
-                              indicatorColor: Colors.transparent,
-                              unselectedLabelColor: Colors.grey,
-                              indicator:
-                                  const BoxDecoration(color: Color(0xffffa300)),
-                              controller: _controller,
-                              tabs: [
-                                Tab(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        tabsPosition = 0;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: const FaIcon(
-                                          FontAwesomeIcons.mobileScreen),
-                                    ),
+                ),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                          width: width * 0.35,
+                          child: TabBar(
+                            indicatorColor: Colors.transparent,
+                            unselectedLabelColor: Colors.grey,
+                            indicator:
+                                const BoxDecoration(color: Color(0xffffa300)),
+                            controller: _controller,
+                            tabs: [
+                              Tab(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      tabsPosition = 0;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: const FaIcon(
+                                        FontAwesomeIcons.mobileScreen),
                                   ),
                                 ),
-                                Tab(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        tabsPosition = 1;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: const FaIcon(
-                                          FontAwesomeIcons.envelope),
-                                    ),
+                              ),
+                              Tab(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      tabsPosition = 1;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child:
+                                        const FaIcon(FontAwesomeIcons.envelope),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
-                        ]),
-                  ]),
-                  Container(
-                    height: height * 0.25,
-                    child:
-                        TabBarView(controller: _controller, children: <Widget>[
-                      Container(
+                        ),
+                      ]),
+                ]),
+                Container(
+                  height: height * 0.25,
+                  child: TabBarView(controller: _controller, children: <Widget>[
+                    Form(
+                      key: formGlobalKey_mobile,
+                      child: Container(
                         margin: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                         child: TextFormField(
+                          keyboardType: TextInputType.number,
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -299,16 +303,36 @@ class _RegisterPageState extends State<Registerpage>
                                   top: 0), // add padding to adjust icon
                               child: Icon(
                                 IconData(
-                                  0xe3c3,
+                                  0xe4a2,
                                   fontFamily: 'MaterialIcons',
                                 ),
                                 color: Colors.white,
                               ),
                             ),
                           ),
+                          validator: (val) {
+                            
+                            if( val != '' && val!.length <  10){
+                              return val!.length < 10
+                                ? 'please provide a valid number'
+                                : null;
+                            }
+                            if (val != '' && val!.length >=  10) {
+                              setState(() {
+                                Mobile_number = val;
+                              });
+                            }
+
+                            return val!.isEmpty
+                                ? 'please provide a mobile number'
+                                : null;
+                          },
                         ),
                       ),
-                      SingleChildScrollView(
+                    ),
+                    Form(
+                      key: formGlobalKey,
+                      child: SingleChildScrollView(
                           child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -362,7 +386,7 @@ class _RegisterPageState extends State<Registerpage>
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontFamily: 'SFPRO regular'),
-                              decoration:  InputDecoration(
+                              decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                       color: Color(0xff979197), width: 1.5),
@@ -411,145 +435,158 @@ class _RegisterPageState extends State<Registerpage>
                           ),
                         ],
                       )),
-                    ]),
-                  ),
-                  Container(
-                    margin:
-                        EdgeInsets.fromLTRB(width * 0.10, height * 0.05, 0, 0),
-                    width: width * 0.80,
-                    height: height * 0.08,
-                    child: ElevatedButton(
-                        onPressed: () {
+                    ),
+                  ]),
+                ),
+                Container(
+                  margin:
+                      EdgeInsets.fromLTRB(width * 0.10, height * 0.05, 0, 0),
+                  width: width * 0.80,
+                  height: height * 0.08,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        if (tabsPosition == 0) {
+                          if (formGlobalKey_mobile.currentState!.validate()) {
+                            FocusScope.of(context).unfocus();
+                            showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (BuildContext context) {
+                                  return const Bottommodal();
+                                });
+                          }
+                        } else {
                           if (formGlobalKey.currentState!.validate()) {
                             FocusScope.of(context).unfocus();
                             createemail_album();
                           }
-                          // showModalBottomSheet(
-                          // shape: RoundedRectangleBorder(
-                          //   borderRadius: BorderRadius.circular(30.0),
-                          // ),
-                          // context: context,
-                          // isScrollControlled: true,
-                          // builder: (BuildContext context) {
-                          //   return const Bottommodal_for_register();
-                          // }
-                          // );
-                        },
-                        child: isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                        }
+                        // showModalBottomSheet(
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(30.0),
+                        // ),
+                        // context: context,
+                        // isScrollControlled: true,
+                        // builder: (BuildContext context) {
+                        //   return const Bottommodal_for_register();
+                        // }
+                        // );
+                      },
+                      child: isLoading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                                // as elevated button gets clicked we will see text"Loading..."
-                                // on the screen with circular progress indicator white in color.
-                                //as loading gets stopped "Submit" will be displayed
-                                children: const [
-                                  Text(
-                                    'Loading...',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              )
-                            : const Text(
-                                "Sign up",
-                                style: TextStyle(
-                                  fontSize: 20,
+                              // as elevated button gets clicked we will see text"Loading..."
+                              // on the screen with circular progress indicator white in color.
+                              //as loading gets stopped "Submit" will be displayed
+                              children: const [
+                                Text(
+                                  'Loading...',
+                                  style: TextStyle(fontSize: 20),
                                 ),
-                              ),
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color(0xffffa300),
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ))),
-                  ),
-                  Container(
-                    width: width,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, height * 0.04, 0, 0),
-                            child: const Text(
-                              "or",
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ],
+                            )
+                          : const Text(
+                              "Sign up",
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.white,
                               ),
                             ),
-                          ),
-                        ]),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            width * 0.30, height * 0.01, 0, 0),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              socialAuth = 'google';
-                            });
-                            signIn();
-                          },
-                          child: Image.asset('images/oval.png'),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            width * 0.15, height * 0.01, 0, 0),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              socialAuth = 'facebook';
-                            });
-                            initiateFacebookLogin();
-                          },
-                          child: Image.asset('images/oval-fb.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: width,
-                    child: Column(
+                      style: ElevatedButton.styleFrom(
+                          primary: const Color(0xffffa300),
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ))),
+                ),
+                Container(
+                  width: width,
+                  child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          margin: EdgeInsets.fromLTRB(10, height * 0.04, 0, 0),
-                          child: RichText(
-                            text: TextSpan(
-                                text: 'Already have an account?',
-                                children: [
-                                  TextSpan(
-                                    text: ' Login in here',
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // print("The word touched is ");
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginPage(),
-                                            ));
-                                      },
-                                  )
-                                ]),
+                          margin: EdgeInsets.fromLTRB(0, height * 0.04, 0, 0),
+                          child: const Text(
+                            "or",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ],
+                      ]),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.fromLTRB(
+                          width * 0.30, height * 0.01, 0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            socialAuth = 'google';
+                          });
+                          signIn();
+                        },
+                        child: Image.asset('images/oval.png'),
+                      ),
                     ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(
+                          width * 0.15, height * 0.01, 0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            socialAuth = 'facebook';
+                          });
+                          initiateFacebookLogin();
+                        },
+                        child: Image.asset('images/oval-fb.png'),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  width: width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(10, height * 0.04, 0, 0),
+                        child: RichText(
+                          text: TextSpan(
+                              text: 'Already have an account?',
+                              children: [
+                                TextSpan(
+                                  text: ' Login in here',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // print("The word touched is ");
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LoginPage(),
+                                          ));
+                                    },
+                                )
+                              ]),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-
-              ),
+                ),
+              ],
             ),
           ),
         ),

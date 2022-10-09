@@ -16,6 +16,7 @@ import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Forgot_password.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -26,6 +27,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool clikc = true;
   String email = '';
+  String Mobile_number = '';
   String password = '';
   Map<String, dynamic>? _userData;
   AccessToken? _accessToken;
@@ -40,12 +42,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     super.initState();
     checkPreviousSessionAndRedirect();
     _passwordVisible = false;
-    final token =  storage.getItem("jwt_token");
+    final token = storage.getItem("jwt_token");
     print(token);
   }
 
   void checkPreviousSessionAndRedirect() async {
-
     final token = await storage.getItem("jwt_token");
     print(token);
     if (token != null) {
@@ -61,8 +62,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Future<http.Response?> createAlbum(String logintype) async {
-     print(await storage.getItem("jwt_token"));
-     print("tgest");
+    print(await storage.getItem("jwt_token"));
+    print("tgest");
     Map<String, dynamic> jsonMap_body = {
       "email": email,
       "password": password,
@@ -96,7 +97,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         print(post);
         if (post["token"] != null) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString('jwt_token', post['token']);
+          prefs.setString('jwt_token', post['token']);
           await storage.setItem('jwt_token', post['token']);
           await storage.setItem('user_id', post['data']['id']);
           await storage.setItem('username', post['data']['username']);
@@ -188,8 +189,29 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       );
       if (response.statusCode == 200) {
         var post = jsonDecode(response.body);
-        print(post["token"]);
-        if (post["token"] != '') {
+        print("googleresgister");
+        print(post);
+        if (post["message"] == "User not Found") {
+          Fluttertoast.showToast(
+              msg: "Invalid login details",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.yellow);
+          setState(() {
+            isLoading = false;
+          });
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Registerpage()),
+            );
+          });
+        } else if (post["token"] != '') {
           await storage.setItem('jwt_token', post['token']);
           await storage.setItem('user_id', post['data']['id']);
           await storage.setItem('username', post['data']['username']);
@@ -273,32 +295,120 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       final userData = await FacebookAuth.instance.getUserData();
       // final userData = await FacebookAuth.instance.getUserData(fields: "email,birthday,friends,gender,link");
       _userData = userData;
-      print("ok");
-      print(userData);
+      Map<String, dynamic> jsonMap_body = {
+        "email": userData!["email"],
+        "user_type": "facebook"
+      };
+      try {
+        setState(() {
+          isLoading = true;
+        });
+        final response = await http.post(
+          Uri.parse('${dotenv.env['API_URL']}/api/login'),
+          headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: json.encode(jsonMap_body),
+        );
+        if (response.statusCode == 200) {
+          var post = jsonDecode(response.body);
+          print(post["token"]);
+          if (post["message"] == "User not Found") {
+            Fluttertoast.showToast(
+                msg: "Invalid login details",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.yellow);
+            setState(() {
+              isLoading = false;
+            });
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Registerpage()),
+              );
+            });
+          } else if (post["token"] != '') {
+            await storage.setItem('jwt_token', post['token']);
+            await storage.setItem('user_id', post['data']['id']);
+            await storage.setItem('username', post['data']['username']);
+            await storage.setItem('user_type', post['data']['user_type']);
+            print(post['data']['id']);
+
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Dashboard(
+                          index: 0,
+                          profileindex: 0,
+                        )),
+              );
+            });
+          } else if (post["data"] != '') {}
+        } else if (response.statusCode == 401) {
+          Fluttertoast.showToast(
+              msg: "Invalid login details",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.yellow);
+        } else {
+          Fluttertoast.showToast(
+              msg: "Invalid login details",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.yellow);
+          setState(() {
+            isLoading = false;
+          });
+          // throw Exception('Failed to create album.');
+        }
+      } on SocketException catch (_) {
+        Fluttertoast.showToast(
+            msg: 'Please check your internet connection',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Colors.red,
+            textColor: Colors.yellow);
+      }
     } else {
       print(result.status);
       print(result.message);
     }
-    if (result == null) {
-      Fluttertoast.showToast(
-          msg: 'Facebook signin Faild',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.yellow);
-    } else {
-      Fluttertoast.showToast(
-          msg: 'Facebook signin Successfull',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Color.fromARGB(255, 24, 133, 14),
-          textColor: Color.fromARGB(255, 255, 255, 255));
-    }
+    // if (result == null) {
+    //   Fluttertoast.showToast(
+    //       msg: 'Facebook signin Faild',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       backgroundColor: Colors.red,
+    //       textColor: Colors.yellow);
+    // } else {
+    //   Fluttertoast.showToast(
+    //       msg: 'Facebook signin Successfull',
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       backgroundColor: Color.fromARGB(255, 24, 133, 14),
+    //       textColor: Color.fromARGB(255, 255, 255, 255));
+    // }
     print(result);
   }
 
   int tabsPosition = 0;
   final formGlobalKey = GlobalKey<FormState>();
+  final formGlobalKey_mobile = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     TabController _controller =
@@ -315,98 +425,98 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             minHeight: MediaQuery.of(context).size.height,
           ),
           child: IntrinsicHeight(
-            child: Form(
-              key: formGlobalKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-                    child: const Text(
-                      "Let’s sign you in.",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 34,
-                          fontFamily: 'SFPRO semibold'),
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 30, 10, 0),
+                  child: const Text(
+                    "Let’s sign you in.",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 34,
+                        fontFamily: 'SFPRO semibold'),
                   ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(10, 7, 10, 0),
-                    child: const Text(
-                      "Welcome back",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontFamily: 'SFPRO reqular'),
-                    ),
+                ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 7, 10, 0),
+                  child: const Text(
+                    "Welcome back",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontFamily: 'SFPRO reqular'),
                   ),
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(10, 7, 10, 30),
-                    child: const Text(
-                      "You’ve been missed!",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: 'SFPRO light'),
-                    ),
+                ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 7, 10, 30),
+                  child: const Text(
+                    "You’ve been missed!",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontFamily: 'SFPRO light'),
                   ),
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-                            width: width * 0.35,
-                            child: TabBar(
-                              indicatorColor: Colors.transparent,
-                              unselectedLabelColor: Colors.grey,
-                              indicator:
-                                  const BoxDecoration(color: Color(0xffffa300)),
-                              controller: _controller,
-                              tabs: [
-                                Tab(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        tabsPosition = 0;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: const FaIcon(
-                                          FontAwesomeIcons.mobileScreen),
-                                    ),
+                ),
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(10, 0, 0, 10),
+                          width: width * 0.35,
+                          child: TabBar(
+                            indicatorColor: Colors.transparent,
+                            unselectedLabelColor: Colors.grey,
+                            indicator:
+                                const BoxDecoration(color: Color(0xffffa300)),
+                            controller: _controller,
+                            tabs: [
+                              Tab(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      tabsPosition = 0;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: const FaIcon(
+                                        FontAwesomeIcons.mobileScreen),
                                   ),
                                 ),
-                                Tab(
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        tabsPosition = 1;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: const FaIcon(
-                                          FontAwesomeIcons.envelope),
-                                    ),
+                              ),
+                              Tab(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      tabsPosition = 1;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child:
+                                        const FaIcon(FontAwesomeIcons.envelope),
                                   ),
-                                )
-                              ],
-                            ),
+                                ),
+                              )
+                            ],
                           ),
-                        ]),
-                  ]),
-                  Container(
-                    height: height * 0.25,
-                    child:
-                        TabBarView(controller: _controller, children: <Widget>[
-                      Container(
+                        ),
+                      ]),
+                ]),
+                Container(
+                  height: height * 0.25,
+                  child: TabBarView(controller: _controller, children: <Widget>[
+                    Form(
+                      key: formGlobalKey_mobile,
+                      child: Container(
                         margin: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                         child: TextFormField(
+                          keyboardType: TextInputType.number,
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -426,17 +536,36 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   top: 0), // add padding to adjust icon
                               child: Icon(
                                 IconData(
-                                  0xe3c3,
+                                  0xe4a2,
                                   fontFamily: 'MaterialIcons',
                                 ),
                                 color: Colors.white,
                               ),
                             ),
                           ),
+                          validator: (val) {
+                            if (val != '' && val!.length < 10) {
+                              return val!.length < 10
+                                  ? 'please provide a valid number'
+                                  : null;
+                            }
+                            if (val != '' && val!.length >= 10) {
+                              setState(() {
+                                Mobile_number = val;
+                              });
+                            }
+
+                            return val!.isEmpty
+                                ? 'please provide a mobile number'
+                                : null;
+                          },
                         ),
                       ),
-                      SingleChildScrollView(
-                          child: Column(
+                    ),
+                    SingleChildScrollView(
+                        child: Form(
+                      key: formGlobalKey,
+                      child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Container(
@@ -562,18 +691,21 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             ],
                           ),
                         ],
-                      )),
-                    ]),
-                  ),
-                  Container(
-                    margin:
-                        EdgeInsets.fromLTRB(width * 0.10, height * 0.05, 0, 0),
-                    width: width * 0.80,
-                    height: height * 0.08,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          print(tabsPosition);
-                          if (tabsPosition == 0) {
+                      ),
+                    )),
+                  ]),
+                ),
+                Container(
+                  margin:
+                      EdgeInsets.fromLTRB(width * 0.10, height * 0.05, 0, 0),
+                  width: width * 0.80,
+                  height: height * 0.08,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        print(tabsPosition);
+                        if (tabsPosition == 0) {
+                          if (formGlobalKey_mobile.currentState!.validate()) {
+                            FocusScope.of(context).unfocus();
                             showModalBottomSheet(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30.0),
@@ -583,118 +715,118 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 builder: (BuildContext context) {
                                   return const Bottommodal();
                                 });
-                          } else {
-                            if (formGlobalKey.currentState!.validate()) {
-                              FocusScope.of(context).unfocus();
-
-                              createAlbum("email");
-                            }
                           }
-                        },
-                        child: isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                        } else {
+                          if (formGlobalKey.currentState!.validate()) {
+                            FocusScope.of(context).unfocus();
 
-                                // as elevated button gets clicked we will see text"Loading..."
-                                // on the screen with circular progress indicator white in color.
-                                //as loading gets stopped "Submit" will be displayed
-                                children: const [
-                                  Text(
-                                    'Loading...',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              )
-                            : const Text(
-                                "Signin",
-                                style: TextStyle(
-                                  fontSize: 20,
+                            createAlbum("email");
+                          }
+                        }
+                      },
+                      child: isLoading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+
+                              // as elevated button gets clicked we will see text"Loading..."
+                              // on the screen with circular progress indicator white in color.
+                              //as loading gets stopped "Submit" will be displayed
+                              children: const [
+                                Text(
+                                  'Loading...',
+                                  style: TextStyle(fontSize: 20),
                                 ),
-                              ),
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color(0xffffa300),
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ))),
-                  ),
-                  Container(
-                    width: width,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0, height * 0.04, 0, 0),
-                            child: const Text(
-                              "or",
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ],
+                            )
+                          : const Text(
+                              "Signin",
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.white,
                               ),
                             ),
-                          ),
-                        ]),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            width * 0.30, height * 0.01, 0, 0),
-                        child: GestureDetector(
-                          onTap: signIn,
-                          child: Image.asset('images/oval.png'),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(
-                            width * 0.15, height * 0.01, 0, 0),
-                        child: GestureDetector(
-                          onTap: () => initiateFacebookLogin(),
-                          child: Image.asset('images/oval-fb.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: width,
-                    child: Column(
+                      style: ElevatedButton.styleFrom(
+                          primary: const Color(0xffffa300),
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ))),
+                ),
+                Container(
+                  width: width,
+                  child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          margin: EdgeInsets.fromLTRB(10, height * 0.04, 0, 0),
-                          child: RichText(
-                            text: TextSpan(
-                                text: 'Don\'t have a account ?',
-                                children: [
-                                  TextSpan(
-                                    text: 'Register',
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // print("The word touched is ");
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Registerpage(),
-                                            ));
-                                      },
-                                  )
-                                ]),
+                          margin: EdgeInsets.fromLTRB(0, height * 0.04, 0, 0),
+                          child: const Text(
+                            "or",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ],
+                      ]),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.fromLTRB(
+                          width * 0.30, height * 0.01, 0, 0),
+                      child: GestureDetector(
+                        onTap: signIn,
+                        child: Image.asset('images/oval.png'),
+                      ),
                     ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(
+                          width * 0.15, height * 0.01, 0, 0),
+                      child: GestureDetector(
+                        onTap: () => initiateFacebookLogin(),
+                        child: Image.asset('images/oval-fb.png'),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  width: width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.fromLTRB(10, height * 0.04, 0, 0),
+                        child: RichText(
+                          text: TextSpan(
+                              text: 'Don\'t have a account ?',
+                              children: [
+                                TextSpan(
+                                  text: 'Register',
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      // print("The word touched is ");
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                Registerpage(),
+                                          ));
+                                    },
+                                )
+                              ]),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

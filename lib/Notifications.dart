@@ -195,7 +195,7 @@ class _Notifications extends State<Notifications> {
                                                 imageUrl: snapshot.data[index]
                                                             ["profile_pic"] !=
                                                         ""
-                                                    ? "${dotenv.env['API_URL']}/profile_pic/${snapshot.data[index]["profile_pic"]}"
+                                                    ? "${dotenv.env['API_URL']}/public/profile_pic/${snapshot.data[index]["profile_pic"]}"
                                                     : 'https://picsum.photos/200',
                                                 imageBuilder:
                                                     (context, imageProvider) =>
