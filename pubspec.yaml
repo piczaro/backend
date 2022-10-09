@@ -57,6 +57,8 @@ dependencies:
   loading_gifs: ^0.3.0
   cached_network_image: ^3.2.1
   flutter_html: ^2.2.1
+  flutter_native_splash: ^2.2.0+1
+  flutter_launcher_icons: ^0.10.0
  
  
 
@@ -119,3 +121,13 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_native_splash:
+  color: "#071b5d"
+  image: images/group.png
+  android: true
+  ios: true
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "images/group.png"
+  image_path_android: "images/group.png"

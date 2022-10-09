@@ -15,7 +15,7 @@ import 'package:localstorage/localstorage.dart';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Forgot_password.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -34,15 +34,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   // String? token;
   bool _passwordVisible = false;
-  final storage = new LocalStorage('my_data');
+  final LocalStorage storage = new LocalStorage('my_data');
   @override
   void initState() {
     super.initState();
     checkPreviousSessionAndRedirect();
     _passwordVisible = false;
+    final token =  storage.getItem("jwt_token");
+    print(token);
   }
 
   void checkPreviousSessionAndRedirect() async {
+
     final token = await storage.getItem("jwt_token");
     print(token);
     if (token != null) {
@@ -58,6 +61,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Future<http.Response?> createAlbum(String logintype) async {
+     print(await storage.getItem("jwt_token"));
+     print("tgest");
     Map<String, dynamic> jsonMap_body = {
       "email": email,
       "password": password,
@@ -90,6 +95,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         var post = jsonDecode(response.body);
         print(post);
         if (post["token"] != null) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString('jwt_token', post['token']);
           await storage.setItem('jwt_token', post['token']);
           await storage.setItem('user_id', post['data']['id']);
           await storage.setItem('username', post['data']['username']);
@@ -97,7 +104,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           await storage.setItem('referal_code', post['data']['referal_code']);
           await storage.setItem('profile_pic', post['data']['profile_pic']);
           print(post['data']['id']);
-
+          // print(await storage.getItem("jwt_token"));
           Future.delayed(const Duration(milliseconds: 1000), () {
             setState(() {
               isLoading = false;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:pixzaro/MyProfile.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +13,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'mydrawer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Appbar.dart';
+
 class Find_my_friends extends StatefulWidget {
   const Find_my_friends({
     Key? key,
@@ -179,11 +181,10 @@ class _Find_my_friends extends State<Find_my_friends> {
                                 color: Color(0xffffa300),
                                 shadowColor: Color(0xffffa300),
                                 child: IconButton(
-                                  onPressed: () =>{
-                                     FocusScope.of(context).unfocus(),
-                                     searchFriends(myController.text),
+                                  onPressed: () => {
+                                    FocusScope.of(context).unfocus(),
+                                    searchFriends(myController.text),
                                   },
-                                      
                                   icon: Icon(Icons.search, color: Colors.white),
                                 )),
                             border: OutlineInputBorder(
@@ -207,9 +208,8 @@ class _Find_my_friends extends State<Find_my_friends> {
                         ),
                       ),
                     ),
-                   
-                     _foundUsers.isNotEmpty
-                        ?  ListView.builder(
+                    _foundUsers.isNotEmpty
+                        ? ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: _foundUsers.length,
@@ -231,8 +231,67 @@ class _Find_my_friends extends State<Find_my_friends> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    if(_foundUsers[index]
+                                                        ['user_type'] == "normal") 
                                     GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => MYProfile(
+                                                    index: _foundUsers[index]
+                                                        ['id'],
+                                                  )),
+                                        );
+                                      },
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(10, 7, 10, 7),
+                                        child: CircleAvatar(
+                                          radius: 30.0,
+                                          child: CachedNetworkImage(
+                                            imageUrl: _foundUsers[index]
+                                                        ['profile_pic'] !=
+                                                    null
+                                                ? "${dotenv.env['Image_URL']}/profile_pic/${_foundUsers[index]['profile_pic']}"
+                                                : 'https://picsum.photos/200',
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              width: 110.0,
+                                              height: 110.0,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.fill),
+                                              ),
+                                            ),
+                                            placeholder: (context, url) =>
+                                                new CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    new Icon(Icons.error),
+                                            maxHeightDiskCache: 200,
+                                            maxWidthDiskCache: 500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    if(_foundUsers[index]
+                                                        ['user_type'] == "google" || _foundUsers[index]
+                                                        ['user_type'] == "facebook") 
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => MYProfile(
+                                                    index: _foundUsers[index]
+                                                        ['id'],
+                                                  )),
+                                        );
+                                      },
                                       child: Container(
                                         margin:
                                             EdgeInsets.fromLTRB(10, 7, 10, 7),
@@ -278,7 +337,18 @@ class _Find_my_friends extends State<Find_my_friends> {
                                           margin: EdgeInsets.fromLTRB(
                                               10, 10, 10, 0),
                                           child: GestureDetector(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        MYProfile(
+                                                          index:
+                                                              _foundUsers[index]
+                                                                  ['id'],
+                                                        )),
+                                              );
+                                            },
                                             child: Flexible(
                                               child: Text(
                                                 _foundUsers[index]['username'],
@@ -308,20 +378,22 @@ class _Find_my_friends extends State<Find_my_friends> {
                                   ],
                                 ),
                               );
-                             
                             })
                         : Column(
-                          children: [
-                             if(isLoading)Center(child: CircularProgressIndicator(),),
-                            if(!isLoading)Center(
-                                child: const Text(
-                                  'No results found',
-                                  style: TextStyle(fontSize: 24),
+                            children: [
+                              if (isLoading)
+                                Center(
+                                  child: CircularProgressIndicator(),
                                 ),
-                              ),
-                          ],
-                        ),
-                        
+                              if (!isLoading)
+                                Center(
+                                  child: const Text(
+                                    'No results found',
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                ),
+                            ],
+                          ),
                   ]))),
       drawer: Drawer(child: DrawerWidget()),
     );

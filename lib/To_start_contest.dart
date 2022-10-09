@@ -91,6 +91,13 @@ class _To_start_contest extends State<To_start_contest> {
                   itemCount: snapshot.data.length,
                   physics: ScrollPhysics(),
                   itemBuilder: (context, index) {
+                    if (snapshot.data[index]['name'] == null) {
+                        return Center(
+                            child: Text(
+                          "No Data",
+                          style: TextStyle(fontSize: 20),
+                        ));
+                      }
                     return Container(
                       child: GestureDetector(
                           onTap: () {

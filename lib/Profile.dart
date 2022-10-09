@@ -80,14 +80,11 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
   int activeindex = 0;
   GlobalKey<_Profile> _myKey = GlobalKey();
   void _passedFunction(String input) {
-   
-      print(input);
-    
+    print(input);
   }
 
-  void  refresh()async{
+  void refresh() async {
     print("loded");
-    
   }
 
   String counttime = "Loading";
@@ -139,35 +136,69 @@ class _Profile extends State<Profile> with TickerProviderStateMixin {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                width: width * 0.30,
-                                height: height * 0.15,
-                                child: CircleAvatar(
-                                  radius: 30.0,
-                                  child: CachedNetworkImage(
-                                    imageUrl: snapshot.data['photoUrl'] != null
-                                        ? snapshot.data['photoUrl']
-                                        : 'https://picsum.photos/200',
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      width: 110.0,
-                                      height: 110.0,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.fill),
+                            if (snapshot.data['user_type'] == "google" ||
+                                snapshot.data['user_type'] == "facebook")
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  width: width * 0.30,
+                                  height: height * 0.15,
+                                  child: CircleAvatar(
+                                    radius: 30.0,
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          snapshot.data['photoUrl'] != null
+                                              ? snapshot.data['photoUrl']
+                                              : 'https://picsum.photos/200',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        width: 110.0,
+                                        height: 110.0,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.fill),
+                                        ),
                                       ),
+                                      placeholder: (context, url) =>
+                                          new CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          new Icon(Icons.error),
+                                      maxHeightDiskCache: 200,
+                                      maxWidthDiskCache: 500,
                                     ),
-                                    placeholder: (context, url) =>
-                                        new CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        new Icon(Icons.error),
-                                    maxHeightDiskCache: 200,
-                                    maxWidthDiskCache: 500,
-                                  ),
-                                )),
+                                  )),
+                            if (snapshot.data['user_type'] == "normal")
+                              Container(
+                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  width: width * 0.30,
+                                  height: height * 0.15,
+                                  child: CircleAvatar(
+                                    radius: 30.0,
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          snapshot.data['profile_pic'] != null
+                                              ? "${dotenv.env['Image_URL']}/profile_pic/${snapshot.data['profile_pic']}"
+                                              : 'https://picsum.photos/200',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        width: 110.0,
+                                        height: 110.0,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.fill),
+                                        ),
+                                      ),
+                                      placeholder: (context, url) =>
+                                          new CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          new Icon(Icons.error),
+                                      maxHeightDiskCache: 200,
+                                      maxWidthDiskCache: 500,
+                                    ),
+                                  )),
                             Container(
                                 child: Text(
                               snapshot.data['username'],

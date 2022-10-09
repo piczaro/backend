@@ -23,6 +23,7 @@ import 'Contest.dart';
 import 'dart:convert';
 import 'package:localstorage/localstorage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Liv_contest extends StatefulWidget {
   const Liv_contest({Key? key}) : super(key: key);
 
@@ -91,12 +92,20 @@ class _Liv_contest extends State<Liv_contest> {
                     style: TextStyle(fontSize: 20),
                   ));
                 }
+
                 return ListView.builder(
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemCount: snapshot.data.length,
                     physics: ScrollPhysics(),
                     itemBuilder: (context, index) {
+                      if (snapshot.data[index]['name'] == null) {
+                        return Center(
+                            child: Text(
+                          "No Data",
+                          style: TextStyle(fontSize: 20),
+                        ));
+                      }
                       return Column(children: [
                         Container(
                           margin: EdgeInsets.fromLTRB(5, 7, 7, 5),
@@ -254,75 +263,75 @@ class _Liv_contest extends State<Liv_contest> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                      //   LikeButton(
-                                      //     size: 30,
-                                      //     circleColor: const CircleColor(
-                                      //         start: Color(0xff00ddff),
-                                      //         end: Color(0xff0099cc)),
-                                      //     bubblesColor: const BubblesColor(
-                                      //       dotPrimaryColor: Color(0xff33b5e5),
-                                      //       dotSecondaryColor:
-                                      //           Color(0xff0099cc),
-                                      //     ),
-                                      //     likeBuilder: (bool isLiked) {
-                                      //       return Icon(
-                                      //         Icons.thumb_up,
-                                      //         color: isLiked
-                                      //             ? Color.fromARGB(
-                                      //                 255, 2, 95, 182)
-                                      //             : Colors.grey,
-                                      //         size: 30,
-                                      //       );
-                                      //     },
-                                      //     likeCount: 665,
-                                      //   ),
-                                      //   LikeButton(
-                                      //     size: 30,
-                                      //     circleColor: const CircleColor(
-                                      //         start: Color(0xff00ddff),
-                                      //         end: Color(0xff0099cc)),
-                                      //     bubblesColor: const BubblesColor(
-                                      //       dotPrimaryColor: Color(0xff33b5e5),
-                                      //       dotSecondaryColor:
-                                      //           Color(0xff0099cc),
-                                      //     ),
-                                      //     likeBuilder: (bool isLiked) {
-                                      //       return Icon(
-                                      //         Icons.emoji_emotions,
-                                      //         color: isLiked
-                                      //             ? Color.fromARGB(
-                                      //                 255, 2, 95, 182)
-                                      //             : Colors.grey,
-                                      //         size: 30,
-                                      //       );
-                                      //     },
-                                      //     likeCount: 665,
-                                      //   ),
-                                      //   LikeButton(
-                                      //     size: 30,
-                                      //     circleColor: const CircleColor(
-                                      //         start: Color.fromARGB(
-                                      //             255, 226, 91, 82),
-                                      //         end: Color.fromARGB(
-                                      //             255, 226, 91, 82)),
-                                      //     bubblesColor: const BubblesColor(
-                                      //       dotPrimaryColor: Color.fromARGB(
-                                      //           255, 226, 91, 82),
-                                      //       dotSecondaryColor: Color.fromARGB(
-                                      //           255, 226, 91, 82),
-                                      //     ),
-                                      //     likeBuilder: (bool isLiked) {
-                                      //       return Icon(
-                                      //         Icons.favorite,
-                                      //         color: isLiked
-                                      //             ? Color.fromARGB(
-                                      //                 255, 226, 91, 82)
-                                      //             : Colors.grey,
-                                      //         size: 30,
-                                      //       );
-                                      //     },
-                                      //     likeCount: 665,
-                                      //   ),
+                                        //   LikeButton(
+                                        //     size: 30,
+                                        //     circleColor: const CircleColor(
+                                        //         start: Color(0xff00ddff),
+                                        //         end: Color(0xff0099cc)),
+                                        //     bubblesColor: const BubblesColor(
+                                        //       dotPrimaryColor: Color(0xff33b5e5),
+                                        //       dotSecondaryColor:
+                                        //           Color(0xff0099cc),
+                                        //     ),
+                                        //     likeBuilder: (bool isLiked) {
+                                        //       return Icon(
+                                        //         Icons.thumb_up,
+                                        //         color: isLiked
+                                        //             ? Color.fromARGB(
+                                        //                 255, 2, 95, 182)
+                                        //             : Colors.grey,
+                                        //         size: 30,
+                                        //       );
+                                        //     },
+                                        //     likeCount: 665,
+                                        //   ),
+                                        //   LikeButton(
+                                        //     size: 30,
+                                        //     circleColor: const CircleColor(
+                                        //         start: Color(0xff00ddff),
+                                        //         end: Color(0xff0099cc)),
+                                        //     bubblesColor: const BubblesColor(
+                                        //       dotPrimaryColor: Color(0xff33b5e5),
+                                        //       dotSecondaryColor:
+                                        //           Color(0xff0099cc),
+                                        //     ),
+                                        //     likeBuilder: (bool isLiked) {
+                                        //       return Icon(
+                                        //         Icons.emoji_emotions,
+                                        //         color: isLiked
+                                        //             ? Color.fromARGB(
+                                        //                 255, 2, 95, 182)
+                                        //             : Colors.grey,
+                                        //         size: 30,
+                                        //       );
+                                        //     },
+                                        //     likeCount: 665,
+                                        //   ),
+                                        //   LikeButton(
+                                        //     size: 30,
+                                        //     circleColor: const CircleColor(
+                                        //         start: Color.fromARGB(
+                                        //             255, 226, 91, 82),
+                                        //         end: Color.fromARGB(
+                                        //             255, 226, 91, 82)),
+                                        //     bubblesColor: const BubblesColor(
+                                        //       dotPrimaryColor: Color.fromARGB(
+                                        //           255, 226, 91, 82),
+                                        //       dotSecondaryColor: Color.fromARGB(
+                                        //           255, 226, 91, 82),
+                                        //     ),
+                                        //     likeBuilder: (bool isLiked) {
+                                        //       return Icon(
+                                        //         Icons.favorite,
+                                        //         color: isLiked
+                                        //             ? Color.fromARGB(
+                                        //                 255, 226, 91, 82)
+                                        //             : Colors.grey,
+                                        //         size: 30,
+                                        //       );
+                                        //     },
+                                        //     likeCount: 665,
+                                        //   ),
                                       ]),
                                   const Text(
                                     "Points : 1000",

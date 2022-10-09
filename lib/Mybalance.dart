@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:pixzaro/RecentTransaction.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'Change_bank_account.dart';
@@ -664,7 +665,7 @@ class _Mybalance extends State<Mybalance> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const Change_bank_account()),
+                                            const RecentTransaction()),
                                   );
                                 },
                                 child: Container(

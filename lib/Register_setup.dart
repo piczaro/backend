@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pixzaro/Register.dart';
 import './Login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -152,59 +153,65 @@ class _Register_setup extends State<Register_setup> {
         });
       }
     } else if (register_type == 'facebook') {
-      final result = await FacebookAuth.instance.login();
-      print(result);
-      // Map<String, dynamic> jsonMap_body = {
-      //   "displayName":result.,
-      //   "email":user?.email,
-      //   "id":  "117824256095574502399",
-      //   "photoUrl":"https://lh3.googleusercontent.com/a-/AOh14Gg-iYPOraKORXKZNygwRZQXO4Zq0dcC7XlTLggMSg",
-      //   "serverAuthCode":"",
-      //   "socialAuth" : "google",
-      //   "username": username,
-      //   "gender" : "Male"
-      // };
-      final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/api/register'),
-        // headers: {
-        //     'Content-type': 'application/json',
-        //     'Accept': 'application/json'
-        // },
-        // body: jsonEncode(jsonMap_body),
-      );
-      if (response.statusCode == 200) {
-        var post = jsonDecode(response.body);
-        if (post['message'] == 'Email Already Exists') {
-          Fluttertoast.showToast(
-              msg: post['message'],
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white);
-          Future.delayed(const Duration(milliseconds: 1000), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          });
-        } else if (post['message'] == 'Successfully registerd') {
-          Fluttertoast.showToast(
-              msg: post['message'],
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white);
-          Future.delayed(const Duration(milliseconds: 1000), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          });
+      if (storage.getItem("fb_email")) {
+        Map<String, dynamic> jsonMap_body = {
+          "displayName": storage.getItem("fb_name"),
+          "email": storage.getItem("fb_email"),
+          "referal_code": "",
+          "photoUrl": storage.getItem("fb_db"),
+          "user_type": "facebook",
+          "username": username,
+          "gender": "Male"
+        };
+        final response = await http.post(
+          Uri.parse('${dotenv.env['API_URL']}/api/register'),
+          // headers: {
+          //     'Content-type': 'application/json',
+          //     'Accept': 'application/json'
+          // },
+          // body: jsonEncode(jsonMap_body),
+        );
+        if (response.statusCode == 200) {
+          var post = jsonDecode(response.body);
+          if (post['message'] == 'Email Already Exists') {
+            Fluttertoast.showToast(
+                msg: post['message'],
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white);
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            });
+          } else if (post['message'] == 'Successfully registerd') {
+            Fluttertoast.showToast(
+                msg: post['message'],
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white);
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            });
+          }else{
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Registerpage()),
+              );
+            });
+          }
+        } else {
+          throw Exception('Failed to create album.');
         }
-      } else {
-        throw Exception('Failed to create album.');
       }
     } else if (register_type == 'email') {
       String email = storage.getItem('email');
@@ -216,7 +223,7 @@ class _Register_setup extends State<Register_setup> {
         "password": password,
         "username": username,
         "gender": "Male",
-        "referal_code":Referral_code
+        "referal_code": Referral_code
       };
       final response = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/api/register'),
@@ -725,8 +732,6 @@ class _Register_setup extends State<Register_setup> {
                                     Referral_code = val.toString();
                                   });
                                 }
-
-                               
                               },
                             ),
                           ],

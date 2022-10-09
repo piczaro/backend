@@ -146,7 +146,7 @@ class _RegisterPageState extends State<Registerpage>
       final userData = await FacebookAuth.instance.getUserData();
       // final userData = await FacebookAuth.instance.getUserData(fields: "email,birthday,friends,gender,link");
       _userData = userData;
-
+      
       print(userData);
     } else {
       print(result.status);
@@ -159,7 +159,10 @@ class _RegisterPageState extends State<Registerpage>
           backgroundColor: Colors.red,
           textColor: Colors.yellow);
     } else {
-      storage.setItem('register_type', 'facebook');
+      await  storage.setItem('fb_name', _userData!["name"]);
+      await  storage.setItem('fb_email', _userData!["email"]);
+      await  storage.setItem('fb_db', _userData!["picture"]["data"]["url"]);      
+      await  storage.setItem('register_type', 'facebook');
       Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Register_setup()),

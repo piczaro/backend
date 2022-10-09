@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Appbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
+
 class Settings extends StatefulWidget {
   const Settings({
     Key? key,
@@ -52,7 +53,9 @@ class _Settings extends State<Settings> {
           dropdownvalue = jsonData['gender'];
           name = jsonData['name'];
           user_type = jsonData['user_type'];
-          profile_pic = jsonData['profile_pic'];
+          if (jsonData['profile_pic'] != null) {
+            profile_pic = jsonData['profile_pic'];
+          }
         });
       }
     } else {}
@@ -90,9 +93,9 @@ class _Settings extends State<Settings> {
       response.headers['Content-type'] = 'application/json';
       response.headers['Accept'] = 'application/json';
       response.headers['Authorization'] = 'Bearer ${token}';
-      
 
-      response.files.add(await http.MultipartFile.fromPath("profile_pic", file.path));
+      response.files
+          .add(await http.MultipartFile.fromPath("profile_pic", file.path));
       var res = await response.send();
       // print(res.body);
       var streaMresponse = await http.Response.fromStream(res);
@@ -124,295 +127,129 @@ class _Settings extends State<Settings> {
     String strDigits(int n) => n.toString().padLeft(2, '0');
 
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(height * 0.08),
-          child: CustomAppBar(title: _title),
-          // child: AppBar(
-          //   // leading: Column(
-          //   //   mainAxisAlignment: MainAxisAlignment.end,
-          //   //   children: [
-          //   //     IconButton(
-          //   //       icon: const Icon(Icons.arrow_back, color: Colors.white),
-          //   //       onPressed: () => Navigator.of(context).pop(),
-          //   //     ),
-          //   //   ],
-          //   // ),
-          //   title: Center(
-          //     child: Text(
-          //       _title,
-          //       style: TextStyle(
-          //         fontSize: 20,
-          //       ),
-          //     ),
-          //   ),
-          //   actions: <Widget>[
-          //     // Using Stack to show Notification Badge
-          //     Center(
-          //       child: Container(
-          //         margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-          //         child: Stack(
-          //           children: <Widget>[
-          //             IconButton(
-          //                 icon: Icon(
-          //                   Icons.notifications,
-          //                   size: 30,
-          //                 ),
-          //                 onPressed: () {
-          //                   setState(() {
-          //                     counter = 0;
-          //                   });
-          //                 }),
-          //             Positioned(
-          //               right: 11,
-          //               top: 11,
-          //               child: Container(
-          //                 padding: const EdgeInsets.all(2),
-          //                 decoration: BoxDecoration(
-          //                   color: Colors.red,
-          //                   borderRadius: BorderRadius.circular(6),
-          //                 ),
-          //                 constraints: const BoxConstraints(
-          //                   minWidth: 18,
-          //                   minHeight: 18,
-          //                 ),
-          //                 child: const Text(
-          //                   '1',
-          //                   style: TextStyle(
-          //                     color: Colors.white,
-          //                     fontSize: 12,
-          //                   ),
-          //                   textAlign: TextAlign.center,
-          //                 ),
-          //               ),
-          //             )
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          //   centerTitle: true,
-          //   toolbarHeight: 100,
-          //   backgroundColor: const Color(0xff1042aa),
-          // ),
-        ),
-        body: Column(
-          children: [
-            if (loading)
-              Center(
-                child: CircularProgressIndicator(),
-              ),
-            if (!loading)
-              Container(
-                margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: const Text(
-                          "Name",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: Text(
-                          name,
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 107, 106, 106),
-                              fontSize: 16,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: const Text(
-                          "Email",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: Text(
-                          useremail,
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 107, 106, 106),
-                              fontSize: 16,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      // Container(
-                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      //   child: const Text("Date of Birth",style:
-                      //     TextStyle(
-                      //       color: Colors.black,
-                      //       fontSize: 18,
-                      //       fontFamily: "SFPRO regular"
-                      //     ),
-                      //   ),
-                      // ),
-                      // Container(
-                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      //   child: const Text("10-02-2022",style :
-                      //      TextStyle(
-                      //       color: Color.fromARGB(255, 107, 106, 106),
-                      //       fontSize: 16,
-                      //       fontFamily: "SFPRO regular"
-                      //     ),
-                      //   ),
-                      // ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: Text(
-                          gender,
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: Text(
-                          dropdownvalue,
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 107, 106, 106),
-                              fontSize: 16,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      // Container(
-                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      //   child: const Text("Pancard",style:
-                      //     TextStyle(
-                      //       color: Colors.black,
-                      //       fontSize: 18,
-                      //       fontFamily: "SFPRO regular"
-                      //     ),
-                      //   ),
-                      // ),
-                      // Container(
-                      //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                      //   child: const Text("ASFH10234",style :
-                      //      TextStyle(
-                      //       color: Color.fromARGB(255, 107, 106, 106),
-                      //       fontSize: 16,
-                      //       fontFamily: "SFPRO regular"
-                      //     ),
-                      //   ),
-                      // ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                        child: const Text(
-                          "Password",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontFamily: "SFPRO regular"),
-                        ),
-                      ),
-                      if (user_type == "normal")
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Changepassword()),
-                                  );
-                                },
-                                child: const Text(
-                                  "change password",
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 10, 109, 201),
-                                    fontSize: 16,
-                                    fontFamily: "SFPRO regular",
-                                    decoration: TextDecoration.underline,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(height * 0.08),
+        child: CustomAppBar(title: _title),
+        // child: AppBar(
+        //   // leading: Column(
+        //   //   mainAxisAlignment: MainAxisAlignment.end,
+        //   //   children: [
+        //   //     IconButton(
+        //   //       icon: const Icon(Icons.arrow_back, color: Colors.white),
+        //   //       onPressed: () => Navigator.of(context).pop(),
+        //   //     ),
+        //   //   ],
+        //   // ),
+        //   title: Center(
+        //     child: Text(
+        //       _title,
+        //       style: TextStyle(
+        //         fontSize: 20,
+        //       ),
+        //     ),
+        //   ),
+        //   actions: <Widget>[
+        //     // Using Stack to show Notification Badge
+        //     Center(
+        //       child: Container(
+        //         margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
+        //         child: Stack(
+        //           children: <Widget>[
+        //             IconButton(
+        //                 icon: Icon(
+        //                   Icons.notifications,
+        //                   size: 30,
+        //                 ),
+        //                 onPressed: () {
+        //                   setState(() {
+        //                     counter = 0;
+        //                   });
+        //                 }),
+        //             Positioned(
+        //               right: 11,
+        //               top: 11,
+        //               child: Container(
+        //                 padding: const EdgeInsets.all(2),
+        //                 decoration: BoxDecoration(
+        //                   color: Colors.red,
+        //                   borderRadius: BorderRadius.circular(6),
+        //                 ),
+        //                 constraints: const BoxConstraints(
+        //                   minWidth: 18,
+        //                   minHeight: 18,
+        //                 ),
+        //                 child: const Text(
+        //                   '1',
+        //                   style: TextStyle(
+        //                     color: Colors.white,
+        //                     fontSize: 12,
+        //                   ),
+        //                   textAlign: TextAlign.center,
+        //                 ),
+        //               ),
+        //             )
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        //   centerTitle: true,
+        //   toolbarHeight: 100,
+        //   backgroundColor: const Color(0xff1042aa),
+        // ),
+      ),
+      body: Column(
+        children: [
+          if (loading)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+          if (!loading)
+            Container(
+              margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    if (user_type == "normal")
+                      Center(
+                        child: Container(
+                            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            width: width * 0.30,
+                            height: height * 0.15,
+                            child: CircleAvatar(
+                              radius: 30.0,
+                              child: CachedNetworkImage(
+                                imageUrl: profile_pic != "" &&
+                                        profile_pic != null
+                                    ? "${dotenv.env['Image_URL']}/profile_pic/${profile_pic}"
+                                    : 'https://picsum.photos/200',
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  width: 110.0,
+                                  height: 110.0,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image: imageProvider, fit: BoxFit.fill),
                                   ),
                                 ),
+                                placeholder: (context, url) =>
+                                    new CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    new Icon(Icons.error),
+                                maxHeightDiskCache: 200,
+                                maxWidthDiskCache: 500,
                               ),
-                            ),
-                          ],
-                        ),
-                      if (user_type == "normal")
-                        Container(
-                          width: width * 0.90,
-                          height: height * 0.07,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const Settings_edit()),
-                                );
-                              },
-                              child: const Text(
-                                "Edit",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                primary: Color(0xffffa300),
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              )),
-                        ),
-                      if (user_type == "normal")
-                        Center(
-                          child: Container(
-                              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                              width: width * 0.30,
-                              height: height * 0.15,
-                              child: CircleAvatar(
-                                radius: 30.0,
-                                child: CachedNetworkImage(
-                                  imageUrl: profile_pic != ""
-                                      ? "${dotenv.env['API_URL']}/profile_pic/${profile_pic}"
-                                      : 'https://picsum.photos/200',
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                    width: 110.0,
-                                    height: 110.0,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.fill),
-                                    ),
-                                  ),
-                                  placeholder: (context, url) =>
-                                      new CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      new Icon(Icons.error),
-                                  maxHeightDiskCache: 200,
-                                  maxWidthDiskCache: 500,
-                                ),
-                              )),
-                        ),
-                      if (user_type == "normal")
-                        Container(
-                          width: width * 0.90,
-                          height: height * 0.07,
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                final result =
+                            )),
+                      ),
+                    if (user_type == "normal")
+                      Container(
+                        width: width * 0.90,
+                        height: height * 0.07,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              final result =
                                   await FilePicker.platform.pickFiles();
 
                               if (result == null) return;
@@ -420,27 +257,193 @@ class _Settings extends State<Settings> {
                               if (file != null) {
                                 Profile_upload(file);
                               }
+                            },
+                            child: const Text(
+                              "Change Profile pic",
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xffffa300),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            )),
+                      ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: const Text(
+                        "Name",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: Text(
+                        name,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 107, 106, 106),
+                            fontSize: 16,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: const Text(
+                        "Email",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: Text(
+                        useremail,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 107, 106, 106),
+                            fontSize: 16,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    // Container(
+                    //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    //   child: const Text("Date of Birth",style:
+                    //     TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 18,
+                    //       fontFamily: "SFPRO regular"
+                    //     ),
+                    //   ),
+                    // ),
+                    // Container(
+                    //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    //   child: const Text("10-02-2022",style :
+                    //      TextStyle(
+                    //       color: Color.fromARGB(255, 107, 106, 106),
+                    //       fontSize: 16,
+                    //       fontFamily: "SFPRO regular"
+                    //     ),
+                    //   ),
+                    // ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: Text(
+                        gender,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: Text(
+                        dropdownvalue,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 107, 106, 106),
+                            fontSize: 16,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    // Container(
+                    //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    //   child: const Text("Pancard",style:
+                    //     TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 18,
+                    //       fontFamily: "SFPRO regular"
+                    //     ),
+                    //   ),
+                    // ),
+                    // Container(
+                    //    margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                    //   child: const Text("ASFH10234",style :
+                    //      TextStyle(
+                    //       color: Color.fromARGB(255, 107, 106, 106),
+                    //       fontSize: 16,
+                    //       fontFamily: "SFPRO regular"
+                    //     ),
+                    //   ),
+                    // ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      child: const Text(
+                        "Password",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: "SFPRO regular"),
+                      ),
+                    ),
+                    if (user_type == "normal")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const Changepassword()),
+                                );
                               },
                               child: const Text(
-                                "Change Profile pic",
+                                "change password",
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  color: Color.fromARGB(255, 10, 109, 201),
+                                  fontSize: 16,
+                                  fontFamily: "SFPRO regular",
+                                  decoration: TextDecoration.underline,
                                 ),
                               ),
-                              style: ElevatedButton.styleFrom(
-                                primary: Color(0xffffa300),
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              )),
-                        ),
-                    ]),
-              ),
-          ],
-        ),
-        drawer: Drawer(child: DrawerWidget()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (user_type == "normal")
+                      Container(
+                        width: width * 0.90,
+                        height: height * 0.07,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const Settings_edit()),
+                              );
+                            },
+                            child: const Text(
+                              "Edit",
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: Color(0xffffa300),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            )),
+                      ),
+                  ]),
+            ),
+        ],
+      ),
+      drawer: Drawer(child: DrawerWidget()),
     );
   }
 }

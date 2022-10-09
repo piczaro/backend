@@ -5,12 +5,17 @@ import 'package:localstorage/localstorage.dart';
 import 'package:pixzaro/Dashboard.dart';
 import 'Dashboard.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-void main() async {
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+Future<void> main() async {
   
+  WidgetsFlutterBinding.ensureInitialized();
   
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var email = prefs.getString('jwt_token');
   final storage = LocalStorage('my_data');
-  // String? token;
+  print(email);
+  print(storage);
   await storage.ready;
   final token = await storage.getItem('jwt_token');
   print(token);
@@ -61,8 +66,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<String> futureAlbum;
-   final storage = new LocalStorage('my_data');
-  Future<String> loaddata() async {
+
+  void loaddata() async {
+    final storage = LocalStorage('my_data');
      print("loaddata");
     String isnotloged = "true";
    
@@ -72,18 +78,23 @@ class _MyHomePageState extends State<MyHomePage> {
     if (token != null) {
       _changePage();
     }
-    return isnotloged;
+    
   }
   @override
   void initState() {
+    print("asdfsdf");
     super.initState();
     checkPreviousSessionAndRedirect();
+    loaddata();
     //  print("asuifdhjksadfhljks");
   }
   void checkPreviousSessionAndRedirect() async {
+    final LocalStorage  storage = LocalStorage('my_data.json');
+
     await storage.ready;
     final token = await storage.getItem("jwt_token");
-    print(token);
+    print(storage);
+    print("sjkdfhskjdhf");
     print("checkPreviousSessionAndRedirect");
     if (token != null) {
       Navigator.push(

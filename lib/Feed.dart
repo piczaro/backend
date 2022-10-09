@@ -11,6 +11,7 @@ import 'package:localstorage/localstorage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import "MyProfile.dart";
 
 class Feed extends StatefulWidget {
   const Feed({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class _Feed extends State<Feed> {
     );
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(response.body)['data'];
-      // print(jsonData);
+      print(jsonData);
       return jsonData;
     } else {
       // If the server did not return a 200 OK response,
@@ -338,13 +339,60 @@ class _Feed extends State<Feed> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (snapshot.data[index]['user_type'] == "normal")
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MYProfile(
+                                                index: snapshot.data[index]
+                                                    ['user_id'],
+                                              )),
+                                    );
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 30.0,
+                                    // backgroundImage:
+                                    child: CachedNetworkImage(
+                                      imageUrl: snapshot.data[index]
+                                                  ['profile_pic'] !=
+                                              null
+                                          ? "${dotenv.env['Image_URL']}/profile_pic/${snapshot.data[index]['profile_pic']}"
+                                          : "https://via.placeholder.com/150",
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        width: 110.0,
+                                        height: 110.0,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.fill),
+                                        ),
+                                      ),
+                                      placeholder: (context, url) =>
+                                          new CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          new Icon(Icons.error),
+                                      maxHeightDiskCache: 200,
+                                      maxWidthDiskCache: 500,
+                                    ),
+                                    // NetworkImage(
+                                    //     'https://via.placeholder.com/150'),
+                                    backgroundColor: Colors.transparent,
+                                  ),
+                                ),
+                              if (snapshot.data[index]['user_type'] == "google" ||  snapshot.data[index]['user_type'] == "facebook")
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const User_profile()),
+                                        builder: (context) => MYProfile(
+                                              index: snapshot.data[index]
+                                                  ['user_id'],
+                                            )),
                                   );
                                 },
                                 child: CircleAvatar(
@@ -387,8 +435,10 @@ class _Feed extends State<Feed> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                const User_profile()),
+                                            builder: (context) => MYProfile(
+                                                  index: snapshot.data[index]
+                                                      ['user_id'],
+                                                )),
                                       );
                                     },
                                     child: Text(
