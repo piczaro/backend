@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:localstorage/localstorage.dart';
+import 'Dashboard.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'Change_bank_account.dart';
@@ -74,7 +75,63 @@ class _Refer_earn extends State<Refer_earn> {
       throw Exception('Failed to load album');
     }
   }
-
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 0,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 1:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 1,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 2,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 3:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 3,
+                profileindex: 0,
+              ),
+            ),
+          );
+          // _scaffoldKey.currentState!.openDrawer();
+        }
+        break;
+    }
+  }
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -553,6 +610,40 @@ class _Refer_earn extends State<Refer_earn> {
             }
           },
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.star),
+            label: 'My Match',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.rss),
+            label: 'Feed',
+            backgroundColor: Colors.purple,
+          ),
+          // BottomNavigationBarItem(
+          //   icon: FaIcon(FontAwesomeIcons.boxesStacked),
+          //   label: 'Others',
+          //   backgroundColor: Colors.pink,
+          // ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.user),
+            label: 'Profile',
+            backgroundColor: Colors.pink,
+          ),
+        ],
+        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        showUnselectedLabels: true,
+        iconSize: 30,
+        onTap: _onItemTapped,
       ),
       drawer: Drawer(child: DrawerWidget()),
     );

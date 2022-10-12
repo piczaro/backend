@@ -108,7 +108,7 @@ class _Dashboard extends State<Dashboard> {
       }
     });
   }
-
+  GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     counttime = CountDown().timeLeft(DateTime.parse("2022-07-23 10:00:00"),

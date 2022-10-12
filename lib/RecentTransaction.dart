@@ -85,6 +85,63 @@ class _Contest extends State<RecentTransaction> {
     {'key': 'Java Tutorial', 'value': 30},
     {'key': 'sdfjsfjk', 'value': 70}
   ];
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 0,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 1:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 1,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 2,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 3:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 3,
+                profileindex: 0,
+              ),
+            ),
+          );
+          // _scaffoldKey.currentState!.openDrawer();
+        }
+        break;
+    }
+  }
   int counter = 0;
   String _title = "Recent Transaction";
   @override
@@ -213,40 +270,40 @@ class _Contest extends State<RecentTransaction> {
               }
             }),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: const <BottomNavigationBarItem>[
-      //     BottomNavigationBarItem(
-      //       // ignore: deprecated_member_use
-      //       icon: Icon(FontAwesomeIcons.home),
-      //       label: 'Home',
-      //       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.star),
-      //       label: 'My Match',
-      //       backgroundColor: Colors.green,
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.rss),
-      //       label: 'Feed',
-      //       backgroundColor: Colors.purple,
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.boxesStacked),
-      //       label: 'Others',
-      //       backgroundColor: Colors.pink,
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.user),
-      //       label: 'Profile',
-      //       backgroundColor: Colors.pink,
-      //     ),
-      //   ],
-      //   selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-      //   unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
-      //   showUnselectedLabels: true,
-      //   iconSize: 35,
-      // ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            // ignore: deprecated_member_use
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.star),
+            label: 'My Match',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.rss),
+            label: 'Feed',
+            backgroundColor: Colors.purple,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.boxesStacked),
+            label: 'Others',
+            backgroundColor: Colors.pink,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.user),
+            label: 'Profile',
+            backgroundColor: Colors.pink,
+          ),
+        ],
+        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        showUnselectedLabels: true,
+        iconSize: 35,
+      ),
     );
   }
 }

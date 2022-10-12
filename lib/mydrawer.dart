@@ -38,6 +38,7 @@ class DrawerWidget extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Mybalance()),
@@ -70,6 +71,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Refer_earn()),
@@ -134,6 +136,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -167,6 +170,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Settings()),
@@ -199,6 +203,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Help_support()),
@@ -231,6 +236,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const About()),
@@ -263,6 +269,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute(

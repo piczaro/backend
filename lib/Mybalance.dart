@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:pixzaro/RecentTransaction.dart';
+import 'Dashboard.dart';
+import 'Globe_contest.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'Change_bank_account.dart';
@@ -13,6 +15,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Appbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Mybalance extends StatefulWidget {
   const Mybalance({
@@ -194,6 +197,64 @@ class _Mybalance extends State<Mybalance> {
     });
   }
 
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 0,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 1:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 1,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 2,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 3:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 3,
+                profileindex: 0,
+              ),
+            ),
+          );
+          // _scaffoldKey.currentState!.openDrawer();
+        }
+        break;
+    }
+  }
+  GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _formKeyWithdraw = GlobalKey<FormState>();
   Widget build(BuildContext context) {
@@ -392,7 +453,7 @@ class _Mybalance extends State<Mybalance> {
                                               ),
                                             ),
                                           )),
-
+    
                                       // Text(
                                       //   "₹ 100",
                                       //   style: TextStyle(
@@ -616,7 +677,7 @@ class _Mybalance extends State<Mybalance> {
                                       } else if (value == 0) {
                                         return 'Please enter value greater than zero';
                                       }
-
+    
                                       var amount = int.parse(value);
                                       if (amount == 0) {
                                         return 'Please enter value greater than zero';
@@ -624,7 +685,7 @@ class _Mybalance extends State<Mybalance> {
                                           snapshot.data!.toInt()) {
                                         return 'Please enter amount less than ${snapshot.data}';
                                       }
-
+    
                                       setState(() {
                                         withdrawaddAmount = amount;
                                       });
@@ -720,6 +781,40 @@ class _Mybalance extends State<Mybalance> {
                 //   color: Colors.blue,
                 // ));
               })),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.star),
+            label: 'My Match',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.rss),
+            label: 'Feed',
+            backgroundColor: Colors.purple,
+          ),
+          // BottomNavigationBarItem(
+          //   icon: FaIcon(FontAwesomeIcons.boxesStacked),
+          //   label: 'Others',
+          //   backgroundColor: Colors.pink,
+          // ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.user),
+            label: 'Profile',
+            backgroundColor: Colors.pink,
+          ),
+        ],
+        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        showUnselectedLabels: true,
+        iconSize: 30,
+        onTap: _onItemTapped,
+      ),
       drawer: Drawer(child: DrawerWidget()),
     );
   }

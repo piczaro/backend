@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
+import 'Dashboard.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
@@ -15,6 +16,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'Appbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class Help_support extends StatefulWidget {
   const Help_support({
     Key? key,
@@ -34,6 +36,63 @@ class _Help_support extends State<Help_support> {
   @override
   void initState() {
     loaddata();
+  }
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 0,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 1:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 1,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 2,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 3:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 3,
+                profileindex: 0,
+              ),
+            ),
+          );
+          // _scaffoldKey.currentState!.openDrawer();
+        }
+        break;
+    }
   }
 
   Future<Map<String, dynamic>> loaddata() async {
@@ -412,6 +471,40 @@ class _Help_support extends State<Help_support> {
                 ]),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.star),
+            label: 'My Match',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.rss),
+            label: 'Feed',
+            backgroundColor: Colors.purple,
+          ),
+          // BottomNavigationBarItem(
+          //   icon: FaIcon(FontAwesomeIcons.boxesStacked),
+          //   label: 'Others',
+          //   backgroundColor: Colors.pink,
+          // ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.user),
+            label: 'Profile',
+            backgroundColor: Colors.pink,
+          ),
+        ],
+        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        showUnselectedLabels: true,
+        iconSize: 30,
+        onTap: _onItemTapped,
       ),
       drawer: Drawer(child: DrawerWidget()),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:pixzaro/MyProfile.dart';
+import 'Dashboard.dart';
 import 'Setting_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,7 +14,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'mydrawer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Appbar.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class Find_my_friends extends StatefulWidget {
   const Find_my_friends({
     Key? key,
@@ -68,6 +69,63 @@ class _Find_my_friends extends State<Find_my_friends> {
     'Item 4',
     'Item 5',
   ];
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 0,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 1:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 1,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 2,
+                profileindex: 0,
+              ),
+            ),
+          );
+        }
+        break;
+      case 3:
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(
+                index: 3,
+                profileindex: 0,
+              ),
+            ),
+          );
+          // _scaffoldKey.currentState!.openDrawer();
+        }
+        break;
+    }
+  }
   final myController = TextEditingController();
   @override
   void dispose() {
@@ -231,101 +289,103 @@ class _Find_my_friends extends State<Find_my_friends> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if(_foundUsers[index]
-                                                        ['user_type'] == "normal") 
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => MYProfile(
-                                                    index: _foundUsers[index]
-                                                        ['id'],
-                                                  )),
-                                        );
-                                      },
-                                      child: Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 7, 10, 7),
-                                        child: CircleAvatar(
-                                          radius: 30.0,
-                                          child: CachedNetworkImage(
-                                            imageUrl: _foundUsers[index]
-                                                        ['profile_pic'] !=
-                                                    null
-                                                ? "${dotenv.env['Image_URL']}/profile_pic/${_foundUsers[index]['profile_pic']}"
-                                                : 'https://picsum.photos/200',
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    Container(
-                                              width: 110.0,
-                                              height: 110.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.fill),
+                                    if (_foundUsers[index]['user_type'] ==
+                                        "normal")
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => MYProfile(
+                                                      index: _foundUsers[index]
+                                                          ['id'],
+                                                    )),
+                                          );
+                                        },
+                                        child: Container(
+                                          margin:
+                                              EdgeInsets.fromLTRB(10, 7, 10, 7),
+                                          child: CircleAvatar(
+                                            radius: 30.0,
+                                            child: CachedNetworkImage(
+                                              imageUrl: _foundUsers[index]
+                                                          ['profile_pic'] !=
+                                                      null
+                                                  ? "${dotenv.env['Image_URL']}/profile_pic/${_foundUsers[index]['profile_pic']}"
+                                                  : 'https://picsum.photos/200',
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                width: 110.0,
+                                                height: 110.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.fill),
+                                                ),
                                               ),
+                                              placeholder: (context, url) =>
+                                                  new CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      new Icon(Icons.error),
+                                              maxHeightDiskCache: 200,
+                                              maxWidthDiskCache: 500,
                                             ),
-                                            placeholder: (context, url) =>
-                                                new CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    new Icon(Icons.error),
-                                            maxHeightDiskCache: 200,
-                                            maxWidthDiskCache: 500,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    if(_foundUsers[index]
-                                                        ['user_type'] == "google" || _foundUsers[index]
-                                                        ['user_type'] == "facebook") 
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => MYProfile(
-                                                    index: _foundUsers[index]
-                                                        ['id'],
-                                                  )),
-                                        );
-                                      },
-                                      child: Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 7, 10, 7),
-                                        child: CircleAvatar(
-                                          radius: 30.0,
-                                          child: CachedNetworkImage(
-                                            imageUrl: _foundUsers[index]
-                                                        ['photoUrl'] !=
-                                                    null
-                                                ? _foundUsers[index]['photoUrl']
-                                                : 'https://picsum.photos/200',
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    Container(
-                                              width: 110.0,
-                                              height: 110.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.fill),
+                                    if (_foundUsers[index]['user_type'] ==
+                                            "google" ||
+                                        _foundUsers[index]['user_type'] ==
+                                            "facebook")
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => MYProfile(
+                                                      index: _foundUsers[index]
+                                                          ['id'],
+                                                    )),
+                                          );
+                                        },
+                                        child: Container(
+                                          margin:
+                                              EdgeInsets.fromLTRB(10, 7, 10, 7),
+                                          child: CircleAvatar(
+                                            radius: 30.0,
+                                            child: CachedNetworkImage(
+                                              imageUrl: _foundUsers[index]
+                                                          ['photoUrl'] !=
+                                                      null
+                                                  ? _foundUsers[index]
+                                                      ['photoUrl']
+                                                  : 'https://picsum.photos/200',
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                width: 110.0,
+                                                height: 110.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.fill),
+                                                ),
                                               ),
+                                              placeholder: (context, url) =>
+                                                  new CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      new Icon(Icons.error),
+                                              maxHeightDiskCache: 200,
+                                              maxWidthDiskCache: 500,
                                             ),
-                                            placeholder: (context, url) =>
-                                                new CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    new Icon(Icons.error),
-                                            maxHeightDiskCache: 200,
-                                            maxWidthDiskCache: 500,
                                           ),
                                         ),
                                       ),
-                                    ),
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -395,6 +455,40 @@ class _Find_my_friends extends State<Find_my_friends> {
                             ],
                           ),
                   ]))),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.star),
+            label: 'My Match',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.rss),
+            label: 'Feed',
+            backgroundColor: Colors.purple,
+          ),
+          // BottomNavigationBarItem(
+          //   icon: FaIcon(FontAwesomeIcons.boxesStacked),
+          //   label: 'Others',
+          //   backgroundColor: Colors.pink,
+          // ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.user),
+            label: 'Profile',
+            backgroundColor: Colors.pink,
+          ),
+        ],
+        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        showUnselectedLabels: true,
+        iconSize: 30,
+        onTap: _onItemTapped,
+      ),
       drawer: Drawer(child: DrawerWidget()),
     );
   }
