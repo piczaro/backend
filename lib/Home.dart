@@ -495,7 +495,7 @@ class _Home extends State<Home> {
                                     //     // EdgeInsets.,
                                     padding:
                                         const EdgeInsets.fromLTRB(10, 20, 15, 0),
-                                    height: height * 0.20,
+                                    height: height * 0.22,
                                     width: width * 0.43,
                                     decoration: BoxDecoration(
                                         border: Border.all(
@@ -552,35 +552,40 @@ class _Home extends State<Home> {
                                           //     width: 110,
                                           //     height: 65,
                                           //     fit: BoxFit.fill),
-                                          ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Contest(
-                                                              id: snapshot
-                                                                      .data[index]
-                                                                  ['id'])),
-                                                );
-                                              },
-                                              child: const Text(
-                                                "Join Contest",
-                                                style: TextStyle(
-                                                  fontSize: 20,
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(0, 7, 0, 0),
+                                            child: ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Contest(
+                                                                id: snapshot
+                                                                        .data[index]
+                                                                    ['id'])),
+                                                  );
+                                                },
+                                                child: const Text(
+                                                  "Join Contest",
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                  primary:
-                                                      const Color(0xffffa300),
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          5, 0, 5, 0),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0),
-                                                  ))),
+                                                style: ElevatedButton.styleFrom(
+                                                    primary:
+                                                        const Color(0xffffa300),
+                                                    padding:
+                                                        const EdgeInsets.fromLTRB(
+                                                            5, 0, 5, 0),
+                                                   
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.0),
+                                                    ))),
+                                          ),
+                                                  
                                         ],
                                       ),
                                     ),

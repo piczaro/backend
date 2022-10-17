@@ -25,6 +25,7 @@ class Find_my_friends extends StatefulWidget {
 }
 
 class _Find_my_friends extends State<Find_my_friends> {
+  String no_result = "";
   Future<http.Response?> searchFriends(String name) async {
     final storage = LocalStorage('my_data');
     final token = await storage.getItem('jwt_token');
@@ -42,7 +43,20 @@ class _Find_my_friends extends State<Find_my_friends> {
     );
     if (response.statusCode == 200) {
       var post = jsonDecode(response.body);
-      print(post);
+      setState(() {
+        isLoading = false;
+      });
+      print(post['data']);
+      if(post['data'].isEmpty ){
+        print("empty");
+        setState(() {
+          no_result = 'No results found';
+        });
+      }else{
+        setState(() {
+          no_result = '';
+        });
+      }
       setState(() {
         _foundUsers = post['data'];
       });
@@ -312,7 +326,7 @@ class _Find_my_friends extends State<Find_my_friends> {
                                                           ['profile_pic'] !=
                                                       null
                                                   ? "${dotenv.env['Image_URL']}/profile_pic/${_foundUsers[index]['profile_pic']}"
-                                                  : 'https://picsum.photos/200',
+                                                  : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                                               imageBuilder:
                                                   (context, imageProvider) =>
                                                       Container(
@@ -362,7 +376,7 @@ class _Find_my_friends extends State<Find_my_friends> {
                                                       null
                                                   ? _foundUsers[index]
                                                       ['photoUrl']
-                                                  : 'https://picsum.photos/200',
+                                                  : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                                               imageBuilder:
                                                   (context, imageProvider) =>
                                                       Container(
@@ -447,8 +461,8 @@ class _Find_my_friends extends State<Find_my_friends> {
                                 ),
                               if (!isLoading)
                                 Center(
-                                  child: const Text(
-                                    'No results found',
+                                  child: Text(
+                                    no_result,
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),

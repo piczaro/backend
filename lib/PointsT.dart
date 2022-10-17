@@ -151,7 +151,7 @@ class _Points extends State<PointsT> {
                                                   BorderRadius.circular(7.0),
                                             ),
                                             child: Text(
-                                              "${snapshot.data[index]['rewards']} cash bonus await",
+                                              "${snapshot.data[index]['rewards']} cash bonus",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18),

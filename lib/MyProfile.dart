@@ -229,7 +229,7 @@ class _MYProfile extends State<MYProfile> with TickerProviderStateMixin {
                                       imageUrl: snapshot.data['profile_pic'] !=
                                               null
                                           ? "${dotenv.env['Image_URL']}/profile_pic/${snapshot.data['profile_pic']}"
-                                          : 'https://picsum.photos/200',
+                                          : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                                       imageBuilder: (context, imageProvider) =>
                                           Container(
                                         width: 110.0,

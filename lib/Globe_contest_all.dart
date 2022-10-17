@@ -19,6 +19,7 @@ import 'package:file_picker/file_picker.dart';
 import 'Contested.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Globe_contest_all extends StatefulWidget {
   const Globe_contest_all({Key? key}) : super(key: key);
 
@@ -46,14 +47,13 @@ class _Globe_contest_all extends State<Globe_contest_all> {
       },
     );
     if (response.statusCode == 200) {
-       var token_data = jsonDecode(response.body)['status'];
-       print(token_data);
-      
-      if(token_data){
+      var token_data = jsonDecode(response.body)['status'];
+      print(token_data);
+
+      if (token_data) {
         var jsonData = jsonDecode(response.body)['data'];
         return jsonData;
-      }
-      else if (!token_data) {
+      } else if (!token_data) {
         Future.delayed(const Duration(milliseconds: 0), () {
           Navigator.push(
             context,
@@ -61,7 +61,7 @@ class _Globe_contest_all extends State<Globe_contest_all> {
           );
         });
       }
-       var jsonData = jsonDecode(response.body)['data'] ?? [];
+      var jsonData = jsonDecode(response.body)['data'] ?? [];
       return jsonData;
     } else {
       // If the server did not return a 200 OK response,
@@ -269,78 +269,78 @@ class _Globe_contest_all extends State<Globe_contest_all> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                          //   LikeButton(
-                                          //     size: 30,
-                                          //     circleColor: const CircleColor(
-                                          //         start: Color(0xff00ddff),
-                                          //         end: Color(0xff0099cc)),
-                                          //     bubblesColor: const BubblesColor(
-                                          //       dotPrimaryColor:
-                                          //           Color(0xff33b5e5),
-                                          //       dotSecondaryColor:
-                                          //           Color(0xff0099cc),
-                                          //     ),
-                                          //     likeBuilder: (bool isLiked) {
-                                          //       return Icon(
-                                          //         Icons.thumb_up,
-                                          //         color: isLiked
-                                          //             ? Color.fromARGB(
-                                          //                 255, 2, 95, 182)
-                                          //             : Colors.grey,
-                                          //         size: 30,
-                                          //       );
-                                          //     },
-                                          //     likeCount: 665,
-                                          //   ),
-                                          //   LikeButton(
-                                          //     size: 30,
-                                          //     circleColor: const CircleColor(
-                                          //         start: Color(0xff00ddff),
-                                          //         end: Color(0xff0099cc)),
-                                          //     bubblesColor: const BubblesColor(
-                                          //       dotPrimaryColor:
-                                          //           Color(0xff33b5e5),
-                                          //       dotSecondaryColor:
-                                          //           Color(0xff0099cc),
-                                          //     ),
-                                          //     likeBuilder: (bool isLiked) {
-                                          //       return Icon(
-                                          //         Icons.emoji_emotions,
-                                          //         color: isLiked
-                                          //             ? Color.fromARGB(
-                                          //                 255, 2, 95, 182)
-                                          //             : Colors.grey,
-                                          //         size: 30,
-                                          //       );
-                                          //     },
-                                          //     likeCount: 665,
-                                          //   ),
-                                          //   LikeButton(
-                                          //     size: 30,
-                                          //     circleColor: const CircleColor(
-                                          //         start: Color.fromARGB(
-                                          //             255, 226, 91, 82),
-                                          //         end: Color.fromARGB(
-                                          //             255, 226, 91, 82)),
-                                          //     bubblesColor: const BubblesColor(
-                                          //       dotPrimaryColor: Color.fromARGB(
-                                          //           255, 226, 91, 82),
-                                          //       dotSecondaryColor:
-                                          //           Color.fromARGB(
-                                          //               255, 226, 91, 82),
-                                          //     ),
-                                          //     likeBuilder: (bool isLiked) {
-                                          //       return Icon(
-                                          //         Icons.favorite,
-                                          //         color: isLiked
-                                          //             ? Color.fromARGB(
-                                          //                 255, 226, 91, 82)
-                                          //             : Colors.grey,
-                                          //         size: 30,
-                                          //       );
-                                          //     },
-                                          //     likeCount: 665,
-                                          //   ),
+                                            //   LikeButton(
+                                            //     size: 30,
+                                            //     circleColor: const CircleColor(
+                                            //         start: Color(0xff00ddff),
+                                            //         end: Color(0xff0099cc)),
+                                            //     bubblesColor: const BubblesColor(
+                                            //       dotPrimaryColor:
+                                            //           Color(0xff33b5e5),
+                                            //       dotSecondaryColor:
+                                            //           Color(0xff0099cc),
+                                            //     ),
+                                            //     likeBuilder: (bool isLiked) {
+                                            //       return Icon(
+                                            //         Icons.thumb_up,
+                                            //         color: isLiked
+                                            //             ? Color.fromARGB(
+                                            //                 255, 2, 95, 182)
+                                            //             : Colors.grey,
+                                            //         size: 30,
+                                            //       );
+                                            //     },
+                                            //     likeCount: 665,
+                                            //   ),
+                                            //   LikeButton(
+                                            //     size: 30,
+                                            //     circleColor: const CircleColor(
+                                            //         start: Color(0xff00ddff),
+                                            //         end: Color(0xff0099cc)),
+                                            //     bubblesColor: const BubblesColor(
+                                            //       dotPrimaryColor:
+                                            //           Color(0xff33b5e5),
+                                            //       dotSecondaryColor:
+                                            //           Color(0xff0099cc),
+                                            //     ),
+                                            //     likeBuilder: (bool isLiked) {
+                                            //       return Icon(
+                                            //         Icons.emoji_emotions,
+                                            //         color: isLiked
+                                            //             ? Color.fromARGB(
+                                            //                 255, 2, 95, 182)
+                                            //             : Colors.grey,
+                                            //         size: 30,
+                                            //       );
+                                            //     },
+                                            //     likeCount: 665,
+                                            //   ),
+                                            //   LikeButton(
+                                            //     size: 30,
+                                            //     circleColor: const CircleColor(
+                                            //         start: Color.fromARGB(
+                                            //             255, 226, 91, 82),
+                                            //         end: Color.fromARGB(
+                                            //             255, 226, 91, 82)),
+                                            //     bubblesColor: const BubblesColor(
+                                            //       dotPrimaryColor: Color.fromARGB(
+                                            //           255, 226, 91, 82),
+                                            //       dotSecondaryColor:
+                                            //           Color.fromARGB(
+                                            //               255, 226, 91, 82),
+                                            //     ),
+                                            //     likeBuilder: (bool isLiked) {
+                                            //       return Icon(
+                                            //         Icons.favorite,
+                                            //         color: isLiked
+                                            //             ? Color.fromARGB(
+                                            //                 255, 226, 91, 82)
+                                            //             : Colors.grey,
+                                            //         size: 30,
+                                            //       );
+                                            //     },
+                                            //     likeCount: 665,
+                                            //   ),
                                           ]),
                                       const Text(
                                         "Points : 1000",
@@ -572,7 +572,7 @@ class _Globe_contest_all extends State<Globe_contest_all> {
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
                                           margin: const EdgeInsets.fromLTRB(
@@ -583,24 +583,6 @@ class _Globe_contest_all extends State<Globe_contest_all> {
                                               fontSize: 17,
                                               color: Colors.black,
                                               fontFamily: "SFPRO regular",
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.fromLTRB(
-                                              10, 5, 10, 0),
-                                          child: Text(
-                                            "${snapshot.data[index]['name']}",
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.black,
-                                              fontFamily: "SFPRO semibold",
                                             ),
                                           ),
                                         ),
@@ -626,13 +608,12 @@ class _Globe_contest_all extends State<Globe_contest_all> {
                                       children: [
                                         Container(
                                           margin: const EdgeInsets.fromLTRB(
-                                              10, 5, 0, 0),
-                                          child: const Text(
-                                            "Completed",
-                                            style: TextStyle(
+                                              10, 5, 10, 0),
+                                          child: Text(
+                                            "${snapshot.data[index]['name']}",
+                                            style: const TextStyle(
                                               fontSize: 20,
-                                              color: Color.fromARGB(
-                                                  255, 30, 163, 13),
+                                              color: Colors.black,
                                               fontFamily: "SFPRO semibold",
                                             ),
                                           ),
@@ -651,115 +632,36 @@ class _Globe_contest_all extends State<Globe_contest_all> {
                                         ),
                                       ],
                                     ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.fromLTRB(10, 20, 10, 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                LikeButton(
-                                                  size: 30,
-                                                  circleColor:
-                                                      const CircleColor(
-                                                          start:
-                                                              Color(0xff00ddff),
-                                                          end: Color(
-                                                              0xff0099cc)),
-                                                  bubblesColor:
-                                                      const BubblesColor(
-                                                    dotPrimaryColor:
-                                                        Color(0xff33b5e5),
-                                                    dotSecondaryColor:
-                                                        Color(0xff0099cc),
-                                                  ),
-                                                  likeBuilder: (bool isLiked) {
-                                                    return Icon(
-                                                      Icons.thumb_up,
-                                                      color: isLiked
-                                                          ? Color.fromARGB(
-                                                              255, 2, 95, 182)
-                                                          : Colors.grey,
-                                                      size: 30,
-                                                    );
-                                                  },
-                                                  likeCount: 665,
-                                                ),
-                                                LikeButton(
-                                                  size: 30,
-                                                  circleColor:
-                                                      const CircleColor(
-                                                          start:
-                                                              Color(0xff00ddff),
-                                                          end: Color(
-                                                              0xff0099cc)),
-                                                  bubblesColor:
-                                                      const BubblesColor(
-                                                    dotPrimaryColor:
-                                                        Color(0xff33b5e5),
-                                                    dotSecondaryColor:
-                                                        Color(0xff0099cc),
-                                                  ),
-                                                  likeBuilder: (bool isLiked) {
-                                                    return Icon(
-                                                      Icons.emoji_emotions,
-                                                      color: isLiked
-                                                          ? Color.fromARGB(
-                                                              255, 2, 95, 182)
-                                                          : Colors.grey,
-                                                      size: 30,
-                                                    );
-                                                  },
-                                                  likeCount: 665,
-                                                ),
-                                                LikeButton(
-                                                  size: 30,
-                                                  circleColor:
-                                                      const CircleColor(
-                                                          start: Color.fromARGB(
-                                                              255, 226, 91, 82),
-                                                          end: Color.fromARGB(
-                                                              255,
-                                                              226,
-                                                              91,
-                                                              82)),
-                                                  bubblesColor:
-                                                      const BubblesColor(
-                                                    dotPrimaryColor:
-                                                        Color.fromARGB(
-                                                            255, 226, 91, 82),
-                                                    dotSecondaryColor:
-                                                        Color.fromARGB(
-                                                            255, 226, 91, 82),
-                                                  ),
-                                                  likeBuilder: (bool isLiked) {
-                                                    return Icon(
-                                                      Icons.favorite,
-                                                      color: isLiked
-                                                          ? Color.fromARGB(
-                                                              255, 226, 91, 82)
-                                                          : Colors.grey,
-                                                      size: 30,
-                                                    );
-                                                  },
-                                                  likeCount: 665,
-                                                ),
-                                              ]),
-                                          const Text(
-                                            "Points : 1000",
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.fromLTRB(
+                                              10, 5, 0, 7),
+                                          child: const Text(
+                                            "Completed",
                                             style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 92, 91, 91),
-                                                fontSize: 15,
-                                                fontFamily: 'SFPRO regular'),
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                                              fontSize: 20,
+                                              color: Color.fromARGB(
+                                                  255, 30, 163, 13),
+                                              fontFamily: "SFPRO semibold",
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                            margin: const EdgeInsets.fromLTRB(
+                                                10, 5, 5, 7),
+                                            child: Text(
+                                              "Points : ${snapshot.data[index]['total_points']}",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 92, 91, 91),
+                                                  fontSize: 15,
+                                                  fontFamily: 'SFPRO regular'),
+                                            )),
+                                      ],
+                                    ),                                   
                                   ],
                                 ),
                               ]),

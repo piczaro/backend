@@ -6,7 +6,7 @@ import 'package:date_count_down/countdown.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:pixzaro/MyProfile.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_countdown_timer/countdown.dart';
@@ -183,7 +183,18 @@ class _Followings extends State<FollowingsT> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       GestureDetector(
-                                        onTap: () {},
+                                        onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MYProfile(
+                                                            index: snapshot
+                                                                    .data[index]
+                                                                ['id'],
+                                                          )),
+                                                );
+                                              },
                                         child: Container(
                                           margin: EdgeInsets.fromLTRB(
                                               10, 5, 10, 10),
@@ -194,7 +205,7 @@ class _Followings extends State<FollowingsT> {
                                                       null
                                                   ? snapshot.data[index]
                                                       ['photoUrl']
-                                                  : 'https://picsum.photos/200',
+                                                  : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                                               imageBuilder:
                                                   (context, imageProvider) =>
                                                       Container(
@@ -229,7 +240,18 @@ class _Followings extends State<FollowingsT> {
                                             margin: EdgeInsets.fromLTRB(
                                                 10, 10, 10, 10),
                                             child: GestureDetector(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MYProfile(
+                                                            index: snapshot
+                                                                    .data[index]
+                                                                ['id'],
+                                                          )),
+                                                );
+                                              },
                                               child: Text(
                                                 snapshot.data[index]
                                                           ['username'],

@@ -6,7 +6,7 @@ import 'package:date_count_down/countdown.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:pixzaro/MyProfile.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_countdown_timer/countdown.dart';
@@ -24,6 +24,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Followers extends StatefulWidget {
   const Followers({Key? key}) : super(key: key);
 
@@ -131,7 +132,16 @@ class _Followers extends State<Followers> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       GestureDetector(
-                                        onTap: () {},
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => MYProfile(
+                                                      index: snapshot
+                                                          .data[index]['id'],
+                                                    )),
+                                          );
+                                        },
                                         child: Container(
                                           margin: EdgeInsets.fromLTRB(
                                               10, 5, 10, 10),
@@ -143,7 +153,7 @@ class _Followers extends State<Followers> {
                                                       null
                                                   ? snapshot.data[index]
                                                       ['photoUrl']
-                                                  : 'https://picsum.photos/200',
+                                                  : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                                               imageBuilder:
                                                   (context, imageProvider) =>
                                                       Container(
@@ -177,10 +187,21 @@ class _Followers extends State<Followers> {
                                             margin: EdgeInsets.fromLTRB(
                                                 10, 10, 10, 10),
                                             child: GestureDetector(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MYProfile(
+                                                            index: snapshot
+                                                                    .data[index]
+                                                                ['id'],
+                                                          )),
+                                                );
+                                              },
                                               child: Text(
                                                 snapshot.data[index]
-                                                          ['username'],
+                                                    ['username'],
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     fontFamily:
@@ -192,8 +213,7 @@ class _Followers extends State<Followers> {
                                             margin: EdgeInsets.fromLTRB(
                                                 10, 5, 0, 0),
                                             child: Text(
-                                               snapshot.data[index]
-                                                          ['name'],
+                                              snapshot.data[index]['name'],
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontFamily: "SFPRO regular"),
