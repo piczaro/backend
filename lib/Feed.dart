@@ -530,7 +530,7 @@ class _Feed extends State<Feed> {
                               errorWidget: (context, url, error) =>
                                   new Icon(Icons.error),
                               imageUrl:
-                                  '${dotenv.env['API_URL']}/participant_images/${snapshot.data[index]['image_path']}',
+                                  '${dotenv.env['API_URL']}/public/participant_images/${snapshot.data[index]['image_path']}',
                               maxHeightDiskCache: 200,
                               maxWidthDiskCache: 500,
                             ),
